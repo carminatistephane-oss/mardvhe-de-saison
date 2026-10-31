@@ -1,5 +1,5 @@
 <!-- ================================================================================== -->
-<!-- APPLICATION LE PETIT MARCHÉ DE MON ESTOMAC - VERSION 13.00 -->
+<!-- APPLICATION LE PETIT MARCHÉ DE MON ESTOMAC - VERSION 13.01 -->
 <!-- INCLUT : AJOUT SAUVEGARDE - IMPORT - TRANSFERT - A PROPOS DE  -->
 <!-- AIDE - PARAMETRE - ALIMENTS MASQUES - FAVORIS -->
 <!-- BOUTON REINITIALISATION - MODE SOMBRE - METHODE GENIE -->
@@ -1546,7 +1546,7 @@
             <p>Harmonie & Digestion</p>
             
             <!-- NOUVEL EMPLACEMENT DE LA VERSION ICI -->
-            <div class="version-badge" onclick="activerModeAdmin()" style="cursor: pointer; user-select: none;">v13.00</div>
+            <div class="version-badge" onclick="activerModeAdmin()" style="cursor: pointer; user-select: none;">v13.01</div>
             
             <div class="profils-section" onclick="ouvrirModalChangerProfil()" style="cursor: pointer; margin: 8px 0 1px 0;">
                 <div class="profils-header" style="cursor: pointer; gap: 2px;">
@@ -2157,6 +2157,14 @@
                 </button>
             </div>
 
+            <!-- ASTUCE POUR COPIER LE LIEN -->
+            <div style="background: #E8F5E9; border: 1px dashed #A5D6A7; border-radius: 12px; padding: 10px 12px; margin-bottom: 15px; font-size: 0.75rem; color: #2E7D32; text-align: left; line-height: 1.4; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);">
+                💡 <strong>Astuce pour copier une recette d'un partenaire :</strong><br>
+                Le site va s'ouvrir dans l'application. Pour copier l'adresse de la recette trouvée :<br>
+                <span style="display: block; margin-top: 4px;">🍎 <strong>Apple :</strong> Touchez la boussole 🧭 (en bas) pour ouvrir Safari.</span>
+                <span style="display: block; margin-top: 2px;">🤖 <strong>Android :</strong> Touchez les 3 points ⋮ (en haut) puis <em>"Ouvrir dans Chrome"</em>.</span>
+            </div>
+
             <!-- 2. Partenaires Suisses (2 par ligne) -->
             <div style="border-top: 1px dashed var(--border-color); padding-top: 12px; margin-bottom: 14px;">
                 <div style="font-size: 0.68rem; color: var(--text-muted); font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; text-align: center;">🇨🇭 Partenaires Suisses</div>
@@ -2385,7 +2393,7 @@
         console.error("Erreur connexion Firebase :", err);
     }
 	
-    const APP_VERSION = "13.00";
+    const APP_VERSION = "13.01";
     document.querySelector('.version-badge').textContent = "v" + APP_VERSION;
     let dateDerniereSync = localStorage.getItem('marche_derniere_sync') || 0;
 	
