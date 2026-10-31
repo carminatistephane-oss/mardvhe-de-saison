@@ -1,5 +1,5 @@
 <!-- ================================================================================== -->
-<!-- APPLICATION LE PETIT MARCHÉ DE MON ESTOMAC - VERSION 12.19 -->
+<!-- APPLICATION LE PETIT MARCHÉ DE MON ESTOMAC - VERSION 13.00 -->
 <!-- INCLUT : AJOUT SAUVEGARDE - IMPORT - TRANSFERT - A PROPOS DE  -->
 <!-- AIDE - PARAMETRE - ALIMENTS MASQUES - FAVORIS -->
 <!-- BOUTON REINITIALISATION - MODE SOMBRE - METHODE GENIE -->
@@ -1546,7 +1546,7 @@
             <p>Harmonie & Digestion</p>
             
             <!-- NOUVEL EMPLACEMENT DE LA VERSION ICI -->
-            <div class="version-badge" onclick="activerModeAdmin()" style="cursor: pointer; user-select: none;">v12.19</div>
+            <div class="version-badge" onclick="activerModeAdmin()" style="cursor: pointer; user-select: none;">v13.00</div>
             
             <div class="profils-section" onclick="ouvrirModalChangerProfil()" style="cursor: pointer; margin: 8px 0 1px 0;">
                 <div class="profils-header" style="cursor: pointer; gap: 2px;">
@@ -2161,10 +2161,10 @@
             <div style="border-top: 1px dashed var(--border-color); padding-top: 12px; margin-bottom: 14px;">
                 <div style="font-size: 0.68rem; color: var(--text-muted); font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; text-align: center;">🇨🇭 Partenaires Suisses</div>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                    <button type="button" class="btn" style="padding: 9px; font-weight: 800; font-size: 0.78rem; border-color: #D4A373; background: #FFFDF8;" onclick="ouvrirPartenaireWeb('https://migusto.migros.ch')">🇨🇭 Migusto</button>
-                    <button type="button" class="btn" style="padding: 9px; font-weight: 800; font-size: 0.78rem; border-color: #4CAF50; background: #FFFDF8; color: #2E7D32;" onclick="ouvrirPartenaireWeb('https://fooby.ch')">🇨🇭 FOOBY</button>
-                    <button type="button" class="btn" style="padding: 9px; font-weight: 800; font-size: 0.78rem; border-color: #D84315; background: #FFFDF8; color: #D84315;" onclick="ouvrirPartenaireWeb('https://www.bettybossi.ch')" >🇨🇭 Betty Bossi</button>
-                    <button type="button" class="btn" style="padding: 9px; font-weight: 800; font-size: 0.78rem; border-color: #1976D2; background: #FFFDF8; color: #1565C0;" onclick="ouvrirPartenaireWeb('https://www.swissmilk.ch/fr/recettes/')">🇨🇭 Swissmilk</button>
+                    <a href="https://migusto.migros.ch" target="_blank" rel="noopener noreferrer" class="btn" style="padding: 9px; font-weight: 800; font-size: 0.78rem; border-color: #D4A373; background: #FFFDF8; text-decoration: none; text-align: center; display: flex; justify-content: center; align-items: center; box-sizing: border-box; color: var(--text-main);">🇨🇭 Migusto</a>
+                    <a href="https://fooby.ch" target="_blank" rel="noopener noreferrer" class="btn" style="padding: 9px; font-weight: 800; font-size: 0.78rem; border-color: #4CAF50; background: #FFFDF8; color: #2E7D32; text-decoration: none; text-align: center; display: flex; justify-content: center; align-items: center; box-sizing: border-box;">🇨🇭 FOOBY</a>
+                    <a href="https://www.bettybossi.ch" target="_blank" rel="noopener noreferrer" class="btn" style="padding: 9px; font-weight: 800; font-size: 0.78rem; border-color: #D84315; background: #FFFDF8; color: #D84315; text-decoration: none; text-align: center; display: flex; justify-content: center; align-items: center; box-sizing: border-box;">🇨🇭 Betty Bossi</a>
+                    <a href="https://www.swissmilk.ch/fr/recettes/" target="_blank" rel="noopener noreferrer" class="btn" style="padding: 9px; font-weight: 800; font-size: 0.78rem; border-color: #1976D2; background: #FFFDF8; color: #1565C0; text-decoration: none; text-align: center; display: flex; justify-content: center; align-items: center; box-sizing: border-box;">🇨🇭 Swissmilk</a>
                 </div>
             </div>
 
@@ -2172,10 +2172,10 @@
             <div style="border-top: 1px dashed var(--border-color); padding-top: 12px;">
                 <div style="font-size: 0.68rem; color: var(--text-muted); font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; text-align: center;">🇫🇷 Partenaires Français</div>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                    <button type="button" class="btn" style="padding: 9px; font-weight: 800; font-size: 0.78rem; border-color: #E65100; background: #FFFDF8; color: #E65100;" onclick="ouvrirPartenaireWeb('https://www.marmiton.org')">🇫🇷 Marmiton</button>
-                    <button type="button" class="btn" style="padding: 9px; font-weight: 800; font-size: 0.78rem; border-color: #8E24AA; background: #FFFDF8; color: #6A1B9A;" onclick="ouvrirPartenaireWeb('https://www.cuisineaz.com')">🇫🇷 Cuisine AZ</button>
-                    <button type="button" class="btn" style="padding: 9px; font-weight: 800; font-size: 0.78rem; border-color: #D32F2F; background: #FFFDF8; color: #C62828;" onclick="ouvrirPartenaireWeb('https://www.750g.com')">🇫🇷 750g</button>
-                    <button type="button" class="btn" style="padding: 9px; font-weight: 800; font-size: 0.78rem; border-color: #0288D1; background: #FFFDF8; color: #0288D1;" onclick="ouvrirPartenaireWeb('https://www.cuisineactuelle.fr')">🇫🇷 Cuisine Actuelle</button>
+                    <a href="https://www.marmiton.org" target="_blank" rel="noopener noreferrer" class="btn" style="padding: 9px; font-weight: 800; font-size: 0.78rem; border-color: #E65100; background: #FFFDF8; color: #E65100; text-decoration: none; text-align: center; display: flex; justify-content: center; align-items: center; box-sizing: border-box;">🇫🇷 Marmiton</a>
+                    <a href="https://www.cuisineaz.com" target="_blank" rel="noopener noreferrer" class="btn" style="padding: 9px; font-weight: 800; font-size: 0.78rem; border-color: #8E24AA; background: #FFFDF8; color: #6A1B9A; text-decoration: none; text-align: center; display: flex; justify-content: center; align-items: center; box-sizing: border-box;">🇫🇷 Cuisine AZ</a>
+                    <a href="https://www.750g.com" target="_blank" rel="noopener noreferrer" class="btn" style="padding: 9px; font-weight: 800; font-size: 0.78rem; border-color: #D32F2F; background: #FFFDF8; color: #C62828; text-decoration: none; text-align: center; display: flex; justify-content: center; align-items: center; box-sizing: border-box;">🇫🇷 750g</a>
+                    <a href="https://www.cuisineactuelle.fr" target="_blank" rel="noopener noreferrer" class="btn" style="padding: 9px; font-weight: 800; font-size: 0.78rem; border-color: #0288D1; background: #FFFDF8; color: #0288D1; text-decoration: none; text-align: center; display: flex; justify-content: center; align-items: center; box-sizing: border-box;">🇫🇷 Cuisine Actuelle</a>
                 </div>
             </div>
         </div>
@@ -2385,7 +2385,7 @@
         console.error("Erreur connexion Firebase :", err);
     }
 	
-    const APP_VERSION = "12.19";
+    const APP_VERSION = "13.00";
     document.querySelector('.version-badge').textContent = "v" + APP_VERSION;
     let dateDerniereSync = localStorage.getItem('marche_derniere_sync') || 0;
 	
