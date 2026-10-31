@@ -1,5 +1,5 @@
-<!-- ========================================================= -->
-<!-- APPLICATION LE PETIT MARCHÉ DE MON ESTOMAC - VERSION 12.17 -->
+<!-- ================================================================================== -->
+<!-- APPLICATION LE PETIT MARCHÉ DE MON ESTOMAC - VERSION 12.19 -->
 <!-- INCLUT : AJOUT SAUVEGARDE - IMPORT - TRANSFERT - A PROPOS DE  -->
 <!-- AIDE - PARAMETRE - ALIMENTS MASQUES - FAVORIS -->
 <!-- BOUTON REINITIALISATION - MODE SOMBRE - METHODE GENIE -->
@@ -11,7 +11,9 @@
 <!-- NOUVEAU POSSIBILITE DE RECHERCHE DE RECETTES ET DE LEUR ENREGISTREMENT -->
 <!-- MISE A JOUR DU MENU D'AIDE - REORGANISATION DOSSIER RACINE -->
 <!-- MISE A JOUR MODAL QR CODE - MISE A JOUR CLASSIFICATION ALIMENTS -->
-<!-- ========================================================= -->
+<!-- CORRECTION AFFICHAGE BOUTONS ALIMENTS QR - 8 VARIATIONS DIFFERANTES -->
+<!-- POUR LA DESCRITION "CUIT" - AJOUTOUT DE PLUSIEURS MODE DE COUPE ET CUISSON DICO -->
+<!-- =================================================================================== -->
 
 <!DOCTYPE html>
 <html lang="fr">
@@ -203,6 +205,61 @@
     .btn-install-pwa:active {
         transform: translateY(2px);
         box-shadow: 0 2px 5px rgba(212, 163, 115, 0.2);
+    }
+
+/* ====== NOTIFICATION CLOUD FLOTTANTE (TOAST) ====== */
+    .cloud-toast {
+        position: fixed;
+        top: 15px;
+        left: 50%;
+        transform: translate(-50%, -150%); /* Caché en haut par défaut */
+        background: #FAF7F2;
+        border: 1.5px solid #D4A373;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.15), 0 4px 10px rgba(212, 163, 115, 0.2);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 15px;
+        z-index: 4000; /* Au-dessus de tout */
+        width: 90%;
+        max-width: 360px;
+        opacity: 0;
+        transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.5s ease;
+        pointer-events: none;
+    }
+    .cloud-toast.show {
+        transform: translate(-50%, 0); /* Glisse vers le bas */
+        opacity: 1;
+        pointer-events: auto;
+    }
+    .cloud-toast-content {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        cursor: pointer;
+        flex: 1;
+    }
+    .cloud-toast-close {
+        background: none;
+        border: none;
+        color: #8D99AE;
+        font-size: 1rem;
+        cursor: pointer;
+        padding: 5px;
+        margin-left: 5px;
+        transition: transform 0.2s;
+    }
+    .cloud-toast-close:active { transform: scale(0.8); }
+    
+    /* Adaptation Mode Sombre */
+    body.dark-mode .cloud-toast {
+        background: #4A423A;
+        border-color: #B89B77;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    }
+    body.dark-mode .cloud-toast-content span[style*="color: var(--text-title)"] {
+        color: #FFF8F0 !important;
     }
 
     /* ====== MEDIA QUERIES ====== */
@@ -1442,22 +1499,41 @@
 <div id="app">
     <div id="view-home">
         
-        <!-- NOUVELLE BARRE DE NAVIGATION (AVEC BOUTON CLOUD) -->
-        <nav id="top-nav" style="display: flex; justify-content: space-between; align-items: center; width: 100%; box-sizing: border-box; margin-bottom: 8px;">
-          <button id="btn-about" class="nav-btn">À Propos</button>
-          <button id="btn-help" class="nav-btn">Aide</button>
+        <!-- NOUVELLE BARRE DE NAVIGATION (PARFAITEMENT CENTRÉE) -->
+        <nav id="top-nav" style="display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; margin-bottom: 8px; width: 100%; box-sizing: border-box;">
           
-          <!-- BOUTON 1-CLIC CLOUD (Invisible tant que le coffre n'est pas créé) -->
-          <button type="button" id="btn-cloud-quick-save" class="nav-btn" style="color: var(--accent-dark); font-weight: 800; display: none;" onclick="sauvegardeCloudUnClic()" title="Sauvegarde Cloud rapide">☁️ Sauver</button>
+          <!-- Colonne 1 : Gauche -->
+          <div style="justify-self: start;">
+              <button id="btn-about" class="nav-btn" style="padding-left: 0;">À Propos</button>
+          </div>
           
-          <button id="btn-settings" class="nav-btn-icon" aria-label="Paramètres">⚙️</button>
+          <!-- Colonne 2 : Centre absolu -->
+          <div style="justify-self: center;">
+              <button id="btn-help" class="nav-btn">Aide</button>
+          </div>
+          
+          <!-- Colonne 3 : Droite (Groupe Cloud + Paramètres) -->
+          <div style="justify-self: end; display: flex; align-items: center; gap: 5px;">
+              <!-- BOUTON 1-CLIC CLOUD (Invisible tant que le coffre n'est pas créé) -->
+              <button type="button" id="btn-cloud-quick-save" class="nav-btn" style="color: var(--accent-dark); font-weight: 800; display: none;" onclick="sauvegardeCloudUnClic()" title="Sauvegarde Cloud rapide">☁️ Sauver</button>
+              
+              <button id="btn-settings" class="nav-btn-icon" aria-label="Paramètres" style="padding-right: 0;">⚙️</button>
+          </div>
+
         </nav>
 
 		<!-- FIN DE LA BARRE DE NAVIGATION -->
 
-        <!-- BANNIÈRE DE RAPPEL DISCRÈTE (Invisible par défaut) -->
-        <div id="cloud-reminder-banner" style="display: none; background: #FAF7F2; border: 1.5px dashed var(--accent); color: var(--text-title); text-align: center; padding: 7px 10px; font-size: 0.75rem; font-weight: 800; border-radius: 12px; margin: 0 0 10px 0; cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.03);" onclick="sauvegardeCloudUnClic()">
-            ☁️ Pensez à sauvegarder votre marché aujourd'hui ! (Cliquez ici)
+        <!-- NOUVELLE NOTIFICATION CLOUD FLOTTANTE (TOAST) -->
+        <div id="cloud-reminder-toast" class="cloud-toast">
+            <div class="cloud-toast-content" onclick="sauvegardeCloudUnClic()">
+                <span style="font-size: 1.4rem; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));">☁️</span>
+                <div style="display: flex; flex-direction: column; text-align: left;">
+                    <span style="font-weight: 800; color: var(--text-title); font-size: 0.85rem; letter-spacing: 0.5px;">Sauvegarde recommandée</span>
+                    <span style="font-size: 0.7rem; color: var(--text-muted); font-weight: 700;">Cliquez ici pour synchroniser</span>
+                </div>
+            </div>
+            <button class="cloud-toast-close" onclick="fermerRappelCloud()">✖</button>
         </div>
         
 
@@ -1470,7 +1546,7 @@
             <p>Harmonie & Digestion</p>
             
             <!-- NOUVEL EMPLACEMENT DE LA VERSION ICI -->
-            <div class="version-badge" onclick="activerModeAdmin()" style="cursor: pointer; user-select: none;">v12.17</div>
+            <div class="version-badge" onclick="activerModeAdmin()" style="cursor: pointer; user-select: none;">v12.19</div>
             
             <div class="profils-section" onclick="ouvrirModalChangerProfil()" style="cursor: pointer; margin: 8px 0 1px 0;">
                 <div class="profils-header" style="cursor: pointer; gap: 2px;">
@@ -2309,7 +2385,7 @@
         console.error("Erreur connexion Firebase :", err);
     }
 	
-    const APP_VERSION = "12.17";
+    const APP_VERSION = "12.19";
     document.querySelector('.version-badge').textContent = "v" + APP_VERSION;
     let dateDerniereSync = localStorage.getItem('marche_derniere_sync') || 0;
 	
@@ -4158,34 +4234,88 @@ function renderCards() {
             let prepLabel = "";
             let prepText = "";
 
+            let evalCru = getToleranceDynamique(leg, currentProfil, 'cru');
+            let evalCuit = getToleranceDynamique(leg, currentProfil, 'cuit');
+
             if (currentModePreparation === 'cru') {
-                let emojiCru = isAvoid ? "🟠" : (leg.tolerance.includes("🟢") ? "🟢" : "🟡");
-                prepLabel = `<span style="font-size:0.9rem;">${emojiCru}</span> <span style="color:#2E7D32;">🥕 SPÉCIFICITÉ CRU</span>`;
+                prepLabel = `<span style="font-size:0.9rem;">${evalCru.emoji}</span> <span style="color:#2E7D32;">🥕 SPÉCIFICITÉ CRU</span>`;
                 prepText = (leg.inconvenient && leg.inconvenient !== "-" && leg.inconvenient !== "Aucun.") 
                     ? leg.inconvenient 
                     : "Aucun inconvénient particulier à cru.";
             } else {
-                let emojiCuit = isAvoid ? "🟠" : (leg.tolerance.includes("🟠") ? "🟡" : "🟢");
-                prepLabel = `<span style="font-size:0.9rem;">${emojiCuit}</span> <span style="color:#D84315;">🍗 SPÉCIFICITÉ CUIT</span>`;
+                prepLabel = `<span style="font-size:0.9rem;">${evalCuit.emoji}</span> <span style="color:#D84315;">🍗 SPÉCIFICITÉ CUIT</span>`;
                 
-                // Si c'est un végétal / féculent
+                let vraiInconvenient = (leg.inconvenient && leg.inconvenient !== "-" && leg.inconvenient !== "Aucun.") ? leg.inconvenient : "";
+
                 if (aUnModeCuisson) {
                     const exclusCrus = ["pomme de terre", "riz", "pate", "pâte", "patate douce", "aubergine", "morille", "lentille", "haricot", "pois chiche", "quinoa", "panais", "manioc", "topinambour", "châtaigne", "chataigne"];
                     const doitEtreCuit = exclusCrus.some(mot => removeAccents(leg.nom.toLowerCase()).includes(mot));
 
+                    // LE VARIATEUR DE VOCABULAIRE PREMIUM (Choisit entre 0 et 7)
+                    const indexVar = leg.id % 8; 
+
                     if (doitEtreCuit) {
-                        prepText = "Cuisson obligatoire : détruit la toxicité à cru et rend l'amidon digeste.";
+                        const phrasesObligatoire = [
+                            "Cuisson impérative (indigeste à cru). ",
+                            "Ne se consomme que cuit. ",
+                            "La cuisson est obligatoire pour l'assimiler. ",
+                            "Toxique ou trop lourd si mangé cru. ",
+                            "À cuire absolument avant consommation. ",
+                            "L'estomac ne peut le traiter qu'une fois cuit. ",
+                            "Inassimilable à l'état cru, cuisson requise. ",
+                            "La chaleur est indispensable pour le rendre digeste. "
+                        ];
+                        prepText = phrasesObligatoire[indexVar] + vraiInconvenient;
+                    } else if (vraiInconvenient) {
+                        if (evalCru.emoji === "🟠" && (evalCuit.emoji === "🟡" || evalCuit.emoji === "🟢")) {
+                            const phrasesAdoucit = [
+                                "La cuisson l'adoucit, mais attention : ",
+                                "Plus digeste une fois cuit, cependant : ",
+                                "La chaleur aide beaucoup, prudence toutefois : ",
+                                "Mieux toléré cuit. Gardez à l'esprit : ",
+                                "La cuisson limite les dégâts, mais notez que : ",
+                                "Bien plus doux après cuisson, malgré tout : ",
+                                "L'effet irritant diminue à la chaleur, mais : ",
+                                "Cuit, il passe beaucoup mieux. Attention tout de même : "
+                            ];
+                            let texteAjuste = vraiInconvenient.charAt(0).toLowerCase() + vraiInconvenient.slice(1);
+                            prepText = phrasesAdoucit[indexVar] + texteAjuste;
+                        } else {
+                            prepText = vraiInconvenient;
+                        }
                     } else {
-                        prepText = "La cuisson détruit les fibres dures et facilite grandement la digestion.";
+                        if (leg.type === 'Fruit') {
+                            const phrasesFruit = [
+                                "La cuisson en compote adoucit parfaitement ses fibres.",
+                                "Très digeste une fois poché ou cuit au four.",
+                                "La chaleur le rend idéal pour les intestins sensibles.",
+                                "Cuit, ce fruit devient un excellent pansement digestif.",
+                                "Ses fibres fondent à la cuisson, un vrai réconfort.",
+                                "Parfaitement toléré lorsqu'il est consommé cuit.",
+                                "La cuisson transforme ce fruit en une douceur très digeste.",
+                                "Idéal en compote pour ne pas fatiguer le système digestif."
+                            ];
+                            prepText = phrasesFruit[indexVar];
+                        } else if (leg.type === 'Légume') {
+                            const phrasesLegume = [
+                                "La chaleur casse la cellulose et le rend très digeste.",
+                                "Une cuisson douce le rend parfaitement toléré.",
+                                "Ses fibres s'adoucissent à la cuisson, un excellent choix.",
+                                "Très doux pour l'estomac une fois bien cuit.",
+                                "La cuisson prolongée garantit une digestion sans effort.",
+                                "Parfaitement assimilé par l'intestin après cuisson.",
+                                "Cuit à cœur, il ne provoque aucun ballonnement.",
+                                "La chaleur détend ses fibres pour un confort optimal."
+                            ];
+                            prepText = phrasesLegume[indexVar];
+                        } else {
+                            prepText = "Excellente tolérance digestive une fois cuit.";
+                        }
                     }
                 } else {
-                    // Pour le fromage, la viande, la crème, etc. : ON AFFICHE LEUR VRAI INCONVÉNIENT !
-                    prepText = (leg.inconvenient && leg.inconvenient !== "-" && leg.inconvenient !== "Aucun.") 
-                        ? leg.inconvenient 
-                        : "Consommer avec modération selon votre tolérance.";
+                    prepText = vraiInconvenient || "Consommer avec modération selon votre tolérance.";
                 }
             }
-		   
 		   		   
             card.innerHTML = `
                 <button class="favorite-btn-card ${getFavoris().includes(leg.id) ? 'active' : 'inactive'}" onclick="toggleFavori(${leg.id})">
@@ -4562,8 +4692,8 @@ async function supprimerCoffreCloud() {
         const btnQuick = document.getElementById('btn-cloud-quick-save');
         if (btnQuick) btnQuick.style.display = 'none';
 
-        const banner = document.getElementById('cloud-reminder-banner');
-        if (banner) banner.style.display = 'none';
+        const toast = document.getElementById('cloud-reminder-toast');
+        if (toast) toast.classList.remove('show');
 
         fermerCloudSetup();
         alert(`✅ Votre Coffre-Fort "${cleCoffre}" a été entièrement supprimé des serveurs Google.`);
@@ -4679,10 +4809,9 @@ async function sauvegardeCloudUnClic() {
 
         localStorage.setItem('marche_last_cloud_save', Date.now());
         
-        // Cache la bannière de rappel si elle était visible
-        const banner = document.getElementById('cloud-reminder-banner');
-        if (banner) banner.style.display = 'none';
-
+        // Cache la notification flottante si elle était visible
+        const toast = document.getElementById('cloud-reminder-toast');
+        if (toast) toast.classList.remove('show');
         if (btnQuick) {
             btnQuick.innerText = "✅ Sauvé !";
             setTimeout(() => { btnQuick.innerText = "☁️ Sauver"; }, 2000);
@@ -4693,6 +4822,13 @@ async function sauvegardeCloudUnClic() {
         if (btnQuick) btnQuick.innerText = "☁️ Sauver";
         alert("⚠️ Échec de la sauvegarde Cloud.");
     }
+}
+
+function fermerRappelCloud() {
+    const toast = document.getElementById('cloud-reminder-toast');
+    if (toast) toast.classList.remove('show');
+    // Astuce : On repousse la date d'un jour pour ne pas harceler l'utilisateur s'il a fermé avec la croix
+    localStorage.setItem('marche_last_cloud_save', Date.now() - (9 * 24 * 60 * 60 * 1000)); 
 }
 
 // 5. SURVEILLANCE AUTOMATIQUE AU DÉMARRAGE
@@ -4711,8 +4847,11 @@ function surveillerEtatCoffre() {
         const dixJours = 10 * 24 * 60 * 60 * 1000;
         
         if (ouvertures % 10 === 0 || (Date.now() - lastSave > dixJours)) {
-            const banner = document.getElementById('cloud-reminder-banner');
-            if (banner) banner.style.display = 'block';
+            const toast = document.getElementById('cloud-reminder-toast');
+            if (toast) {
+                // Petit délai pour laisser l'appli s'afficher avant de faire glisser la notif
+                setTimeout(() => { toast.classList.add('show'); }, 800);
+            }
         }
     } else {
         // Premier lancement de l'application : on invite à créer le coffre
@@ -4985,57 +5124,60 @@ function dessinerInterfacePilules() {
     const fichesSelectionnees = fichesAEnvoyerGlobal.filter(f => selectionFichesIds.includes(String(f.id || f.nom)));
     const totalCoches = fichesSelectionnees.length;
 
-// 1. Boutons avec gestion des fiches "Déjà envoyées" (Grisées mais réversibles)
+    // 1. Boutons avec gestion des fiches "Déjà envoyées" (Grisées mais réversibles)
     let pilulesHTML = fichesAEnvoyerGlobal.map(f => {
         const identifiant = String(f.id || f.nom);
-		const estCoche = selectionFichesIds.map(String).includes(identifiant);
-        const estDejaEnvoye = f.dejaEnvoye && !estCoche; // Si elle a été envoyée et n'est pas cochée
+        const estCoche = selectionFichesIds.map(String).includes(identifiant);
+        const estDejaEnvoye = f.dejaEnvoye && !estCoche; 
         
         let bg, color, border, icone, actionClic;
 
         if (estDejaEnvoye) {
-            // Style "Grisé et inactif", mais on peut cliquer pour le remettre !
-            bg = '#F2F0EB';
-            color = '#A89F91';
-            border = '#E8E0D2';
-            icone = '↩️'; // Icône de retour
+            bg = '#F9F7F2'; color = '#A89F91'; border = '#E8E0D2';
+            icone = `<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 14 4 9 9 4"></polyline><path d="M20 20v-7a4 4 0 0 0-4-4H4"></path></svg>`;
             actionClic = `annulerEnvoiFiche('${identifiant}')`;
+        } else if (estCoche) {
+            bg = '#F1F8F2'; color = '#2E7D32'; border = '#A5D6A7';
+            icone = `<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
+            actionClic = `basculerPiluleQr('${identifiant}')`;
         } else {
-            // Style normal "En attente" (Coché ou non coché)
-            bg = estCoche ? '#2E7D32' : '#FFFFFF';
-            color = estCoche ? '#FFFFFF' : '#4A4A4A';
-            border = estCoche ? '#2E7D32' : '#E8E0D2';
-            icone = estCoche ? '✅' : '⬜';
+            bg = '#FFFFFF'; color = '#4A4A4A'; border = '#D1C7B8';
+            icone = `<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle></svg>`;
             actionClic = `basculerPiluleQr('${identifiant}')`;
         }
         
-        return `<button type="button" onclick="${actionClic}" style="background:${bg}; color:${color}; border:1px solid ${border}; border-radius:10px; padding:6px 8px; font-size:0.78rem; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:flex-start; gap:6px; width:100%; box-sizing:border-box; box-shadow:0 1px 3px rgba(0,0,0,0.02); text-align:left; transition: all 0.2s; opacity: ${estDejaEnvoye ? '0.7' : '1'};">
-            <span>${icone}</span> <span style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis; ${estDejaEnvoye ? 'text-decoration: line-through;' : ''}">${f.nom}</span>
+        // CORRECTION ICI : min-width: 0 sur le bouton ET flex: 1; min-width: 0; sur le texte !
+        return `<button type="button" onclick="${actionClic}" style="background:${bg}; color:${color}; border:1px solid ${border}; border-radius:12px; padding:7px 8px; font-size:0.75rem; font-weight:800; cursor:pointer; display:flex; align-items:center; justify-content:flex-start; gap:6px; width:100%; min-width:0; box-sizing:border-box; box-shadow:0 2px 4px rgba(0,0,0,0.02); text-align:left; transition: all 0.2s; opacity: ${estDejaEnvoye ? '0.7' : '1'};">
+            <span style="display:flex; align-items:center; flex-shrink:0;">${icone}</span> 
+            <span style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis; flex:1; min-width:0; ${estDejaEnvoye ? 'text-decoration: line-through;' : ''}">${f.nom}</span>
         </button>`;
     }).join('');
 
-    // 2. Grille à 2 colonnes avec barre de défilement discrète
+    // 2. Grille à 2 colonnes avec barre de défilement sécurisée
     let actionsHTML = `
-        <div style="font-size:0.75rem; color:var(--text-muted); margin-bottom:8px; text-align:center; text-transform:uppercase; font-weight:800;">
+        <div style="font-size:0.72rem; color:var(--text-muted); margin-bottom:10px; text-align:center; text-transform:uppercase; font-weight:800; letter-spacing: 0.5px;">
             Fiches en attente (${totalCoches} sélectionnées)
         </div>
         
-        <!-- Le conteneur en grille (2 colonnes) avec scrollbar personnalisée -->
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:6px; margin-bottom:12px; max-height:140px; overflow-y:auto; overflow-x:hidden; padding:6px; border:1px solid var(--border-color); border-radius:16px; background:#FAF7F2; scrollbar-width: thin; scrollbar-color: var(--accent) transparent;">
-            <style>
-                /* Barre de défilement fine pour Chrome/Safari */
-                #qr-modal-liste::-webkit-scrollbar { width: 6px; }
-                #qr-modal-liste::-webkit-scrollbar-track { background: transparent; }
-                #qr-modal-liste::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
-            </style>
-            <div id="qr-modal-liste" style="display: contents;">
+        <style>
+            .qr-scroll-area::-webkit-scrollbar { width: 6px; }
+            .qr-scroll-area::-webkit-scrollbar-track { background: transparent; }
+            .qr-scroll-area::-webkit-scrollbar-thumb { background: rgba(212, 163, 115, 0.5); border-radius: 10px; }
+        </style>
+        
+        <!-- Conteneur principal avec défilement et padding droit renforcé (14px) -->
+        <div class="qr-scroll-area" style="max-height:160px; overflow-y:auto; overflow-x:hidden; margin-bottom:15px; border:1px solid var(--border-color); border-radius:16px; background:#FAF7F2; padding:10px 14px 10px 10px; scrollbar-width: thin; scrollbar-color: rgba(212, 163, 115, 0.5) transparent;">
+            
+            <!-- La grille à l'intérieur, contrainte à 100% -->
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px; width:100%;">
                 ${pilulesHTML}
             </div>
+            
         </div>
         
         <div style="display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center; width: 100%; box-sizing: border-box; margin: 0 auto 15px auto;">
-            <button type="button" onclick="validerEnvoiTermine()" style="background:#E8F5E9; border:1px solid #A5D6A7; color:#2E7D32; font-weight:800; font-size:0.75rem; padding:8px 6px; border-radius:12px; cursor:pointer; width:100%; text-align:center;">✅ Marquer comme envoyé</button>
-            <button type="button" onclick="forcerRenvoyerToutHistorique()" style="background:#FFF; border:1px dashed var(--accent); color:var(--accent-dark); font-size:0.75rem; padding:8px 10px; border-radius:12px; cursor:pointer; white-space:nowrap;" title="Recharger tout">↺ Historique</button>
+            <button type="button" onclick="validerEnvoiTermine()" style="background:#E8F5E9; border:1px solid #A5D6A7; color:#2E7D32; font-weight:800; font-size:0.75rem; padding:10px; border-radius:14px; cursor:pointer; width:100%; text-align:center; box-shadow: 0 2px 4px rgba(46, 125, 50, 0.05);">✅ Marquer comme envoyé</button>
+            <button type="button" onclick="forcerRenvoyerToutHistorique()" style="background:#FFF; border:1px dashed var(--accent); color:var(--accent-dark); font-size:0.75rem; padding:10px 12px; border-radius:14px; cursor:pointer; white-space:nowrap; font-weight: 800;" title="Recharger tout">↺ Historique</button>
         </div>
     `;
 
@@ -5043,7 +5185,7 @@ function dessinerInterfacePilules() {
 
     if (fichesSelectionnees.length === 0) {
         let container = document.getElementById('qrcode-container');
-        if (container) container.innerHTML = '<div style="padding:20px; color:#A06A42; font-size:0.85rem; text-align:center;">⚠️ Cochez au moins une fiche pour générer un code !</div>';
+        if (container) container.innerHTML = '<div style="padding:20px; color:#A06A42; font-size:0.85rem; text-align:center; font-weight: 700;">⚠️ Cochez au moins une fiche pour générer un code !</div>';
         return;
     }
 
@@ -5550,6 +5692,15 @@ const dicoAnglaisVersFrancais = {
     "chives": "ciboulette",  "tarragon": "estragon", "thai basil": "basilic thaï", "sage": "sauge", "fish sauce": "sauce de poisson", "lemongrass": "citronnelle", "kaffir lime leaves": "feuilles de kaffir",
 	"kaffir leaves": "feuilles de kaffir", "lime leaves": "feuilles de kaffir", "olives": "olives", "black olives": "olives", "green olives": "olives", "olive": "olives", "preserved lemon": "citrons confits", "preserved lemons": "citrons confits",
     "anchovies": "anchois", "anchovy": "anchois", "anchovy fillets": "anchois",
+
+	// --- NOUVEAUX AJOUTS (DÉCOUPES & CUISSONS) ---
+    "sliced": "émincé", "slice": "tranche", "slices": "tranches", 
+    "fillet": "filet", "fillets": "filets", "tenderloin": "filet",
+    "fish steak": "darne", "roll": "roulé", "rolls": "roulés", "rolled": "roulé", 
+    "stuffed": "farci", "tart": "tarte", "pie": "tarte", "cake": "gâteau",
+    "skillet": "poêlée", "hotpot": "potée", "pan-fried": "poêlé",
+    "stew": "ragoût", "roast": "rôti", "roasted": "rôti", "meatball": "boulette", "meatballs": "boulettes"
+
 };
 
 // Analyse bienveillante et constructive de la recette
@@ -5907,7 +6058,21 @@ const dicoTraductionTheMealDB = {
     "ciboulette": "chives", "estragon": "tarragon", "basilic thai": "thai basil", "basilic thaï": "thai basil", "sauge": "sage", "sauce de poisson": "fish sauce", "nuoc mam": "fish sauce", "nuoc-mam": "fish sauce",
     "lait de coco": "coconut milk", "citronnelle": "lemongrass", "feuilles de kaffir": "kaffir lime leaves", "kaffir": "kaffir lime leaves", "combava": "kaffir lime leaves",
     "olive": "olive", "olives": "olives", "citron confit": "preserved lemon", "citrons confits": "preserved lemons", "anchois": "anchovies", "anchoi": "anchovies",
+
+// --- NOUVEAUX AJOUTS (DÉCOUPES & CUISSONS) ---
+    "emince": "sliced", "émincé": "sliced", "eminces": "sliced", "émincés": "sliced",
+    "tranche": "slice", "tranches": "slices", "filet": "fillet", "filets": "fillets",
+    "darne": "fish steak", "darnes": "fish steaks",
+    "roule": "roll", "roulé": "roll", "roules": "rolls", "roulés": "rolls",
+    "poelee": "skillet", "poêlée": "skillet", "poele": "pan-fried", "poêlé": "pan-fried",
+    "potee": "hotpot", "potée": "hotpot",
+    "farci": "stuffed", "farcis": "stuffed", "farcie": "stuffed", "farcies": "stuffed",
+    "tart": "tart", "tarts": "tarts",
+    "ragout": "stew", "ragoût": "stew", "mijote": "stew", "mijoté": "stew",
+    "boulette": "meatball", "boulettes": "meatballs",
+    "roti": "roast", "rôti": "roast", "gateau": "cake", "gâteau": "cake"
 };
+
 let pageRecettesIndex = 0;
 let listeRecettesUniquesGlobal = [];
 
