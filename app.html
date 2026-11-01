@@ -1,5 +1,5 @@
 <!-- ================================================================================== -->
-<!-- APPLICATION LE PETIT MARCHÉ DE MON ESTOMAC - VERSION 13.03 -->
+<!-- APPLICATION LE PETIT MARCHÉ DE MON ESTOMAC - VERSION 13.04 -->
 <!-- INCLUT : AJOUT SAUVEGARDE - IMPORT - TRANSFERT - A PROPOS DE  -->
 <!-- AIDE - PARAMETRE - ALIMENTS MASQUES - FAVORIS -->
 <!-- BOUTON REINITIALISATION - MODE SOMBRE - METHODE GENIE -->
@@ -1543,7 +1543,7 @@
             <p>Harmonie & Digestion</p>
             
             <!-- NOUVEL EMPLACEMENT DE LA VERSION ICI -->
-            <div class="version-badge" onclick="activerModeAdmin()" style="cursor: pointer; user-select: none;">v13.03</div>
+            <div class="version-badge" onclick="activerModeAdmin()" style="cursor: pointer; user-select: none;">v13.04</div>
             
             <div class="profils-section" onclick="ouvrirModalChangerProfil()" style="cursor: pointer; margin: 8px 0 1px 0;">
                 <div class="profils-header" style="cursor: pointer; gap: 2px;">
@@ -1987,16 +1987,19 @@
             <p style="margin: 0; color: #555; line-height: 1.4;"><strong>Ajouter ou retirer :</strong> Cliquez sur le petit cœur en haut à droite d'une fiche. Il devient rouge et se synchronise avec l'accueil.</p>
         </div>
 
-        <!-- 7. LE MOTEUR DE RECETTES (NOUVEAU) -->
+        <!-- 7. LE MOTEUR DE RECETTES & LE CARNET GLOBAL -->
         <div style="background: #E3F2FD; border-left: 4px solid #1976D2; padding: 12px; margin-bottom: 12px; border-radius: 0 8px 8px 0;">
-            <p style="color: #1565C0; font-weight: 800; font-size: 0.95rem; margin: 0 0 5px 0;">7. Moteur de Recettes Intelligent 🍲</p>
+            <p style="color: #1565C0; font-weight: 800; font-size: 0.95rem; margin: 0 0 5px 0;">7. Moteur de Recettes & Carnet Global 🍲</p>
             <p style="margin: 0 0 5px 0; color: #555; line-height: 1.4;">Cliquez sur <strong>🔍 Chercher une recette</strong> dans n'importe quelle fiche !</p>
-            <ul style="margin: 0; padding-left: 15px; color: #555; line-height: 1.4;">
+            <ul style="margin: 0 0 10px 0; padding-left: 15px; color: #555; line-height: 1.4;">
                 <li style="margin-bottom: 4px;"><strong>TheMealDB :</strong> Lisez, traduisez 🌐, et enregistrez 💾 des recettes mondiales en un clic, directement sur la fiche de l'aliment.</li>
-                <li><strong>Sites 🇫🇷 & 🇨🇭 :</strong> Des liens directs à leur plateforme vers Marmiton, FOOBY, Migusto, etc.</li>
+                <li style="margin-bottom: 4px;"><strong>Sites 🇫🇷 & 🇨🇭 :</strong> Des liens directs à leur plateforme vers Marmiton, FOOBY, Migusto, etc.</li>
             </ul>
+            <p style="margin: 0 0 5px 0; color: #1565C0; font-weight: 800; font-size: 0.85rem;">📖 Mon Carnet de Recettes :</p>
+            <p style="margin: 0; color: #555; line-height: 1.4; font-size: 0.85rem;">
+                Toutes les recettes que vous enregistrez sont automatiquement regroupées dans votre <strong>Carnet de Recettes</strong> (accessible tout en bas de la page d'accueil). Depuis ce carnet, vous pouvez consulter vos recettes 👁️, les supprimer 🗑️, ou même les déplacer 🔄 vers un autre aliment en cas d'erreur !
+            </p>
         </div>
-
         <!-- 8. Sauvegardes & Partages -->
         <div style="background: #EFEBE9; border-left: 4px solid #795548; padding: 12px; margin-bottom: 12px; border-radius: 0 8px 8px 0;">
             <p style="color: #4E342E; font-weight: 800; font-size: 0.95rem; margin: 0 0 8px 0; display: flex; align-items: center; gap: 6px;">
@@ -2270,6 +2273,37 @@
     </div>
 </div>
 
+<!-- MODALE CARNET DE RECETTES GLOBAL -->
+<div id="modal-carnet-recettes" class="modal" style="display: none;">
+    <div class="modal-content" style="max-width: 500px; max-height: 85vh; overflow-y: auto; padding: 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <h3 style="margin: 0; color: var(--text-title); font-family: 'Playfair Display', serif; font-size: 1.4rem;">📖 Mes Recettes</h3>
+            <button type="button" style="background: none; border: none; font-size: 1.2rem; cursor: pointer; padding: 0;" onclick="fermerCarnetRecettes()">❌</button>
+        </div>
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0; margin-bottom: 15px;">Retrouvez ici toutes les recettes que vous avez enregistrées, classées par ordre alphabétique.</p>
+        
+        <!-- C'est ici que la liste va s'afficher -->
+        <div id="liste-carnet-recettes" style="display: flex; flex-direction: column; gap: 10px;"></div>
+    </div>
+</div>
+
+<!-- MODALE DÉPLACER UNE RECETTE -->
+<div id="modal-deplacer-recette" class="modal-overlay hidden">
+    <div class="modal-box" style="max-width: 400px; text-align: center;">
+        <h3 style="margin-top:0; color: var(--text-title);">🔄 Déplacer la recette</h3>
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 15px;">Choisissez le nouvel aliment auquel vous souhaitez associer cette recette :</p>
+        
+        <select id="select-nouvel-aliment" class="form-control" style="margin-bottom: 20px; font-weight: 700; color: var(--accent-dark);">
+            <!-- Rempli dynamiquement par le JavaScript -->
+        </select>
+        
+        <div style="display: flex; gap: 10px;">
+            <button class="btn" style="flex: 1; padding: 12px; border-radius: 12px; font-weight: 700;" onclick="fermerModalDeplacerRecette()">Annuler</button>
+            <button class="btn btn-primary" style="flex: 1; padding: 12px; border-radius: 12px; font-weight: 800;" onclick="validerDeplacementRecette()">✅ Déplacer</button>
+        </div>
+    </div>
+</div>
+
 <!-- MODALE COFFRE-FORT CLOUD (AVEC GESTION & SUPPRESSION) -->
 <div id="modal-cloud-setup" class="modal-overlay hidden">
   <div class="modal-box" style="text-align: center; max-width: 420px;">
@@ -2390,7 +2424,7 @@
         console.error("Erreur connexion Firebase :", err);
     }
 	
-    const APP_VERSION = "13.03";
+    const APP_VERSION = "13.04";
     document.querySelector('.version-badge').textContent = "v" + APP_VERSION;
     let dateDerniereSync = localStorage.getItem('marche_derniere_sync') || 0;
 	
@@ -2483,7 +2517,7 @@ const defaultData = [
     { id: 2, nom: "Épinard", soustitre: "", type: "Légume", image: "", tolerance: "🟡 Moyen", saison: "Printemps", fodmap: "Bas", fructose: "Bas", fibres: "Solubles", cg: "Bas", acidite: "Doux", graisses: "Maigre", lactose: "Sans", gluten: "Sans", texture: "Fondante", avantage: "Riches en nutriments.", inconvenient: "Peuvent accélérer brutalement le transit.", preparation: "Retirer les tiges, hacher finement les feuilles, cuire fondus à la poêle.", notes: "", recettesList: [] },
     { id: 3, nom: "Laitue", soustitre: "", type: "Légume", image: "", tolerance: "🟡 Moyen", saison: "Printemps", fodmap: "Bas", fructose: "Bas", fibres: "Solubles", cg: "Bas", acidite: "Doux", graisses: "Maigre", lactose: "Sans", gluten: "Sans", texture: "Fondante", avantage: "Alternative aux crudités.", inconvenient: "Crue, elle irrite l'intestin enflammé.", preparation: "La manger cuite ! (braisée ou en velouté) pour casser la cellulose.", notes: "", recettesList: [] },
     { id: 5, nom: "Radis", soustitre: "", type: "Légume", image: "", tolerance: "🔴 À proscrire", saison: "Printemps", fodmap: "Bas", fructose: "Bas", fibres: "Insolubles", cg: "Bas", acidite: "Acide", graisses: "Maigre", lactose: "Sans", gluten: "Sans", texture: "Ferme", avantage: "Aucun.", inconvenient: "Se mange cru, fibres dures, piquant, irrite la muqueuse.", preparation: "À éviter.", notes: "", recettesList: [] },
-    { id: 31, nom: "Pak-choi", soustitre: "", type: "Légume", image: "", tolerance: "🟡 Moyen", saison: "Printemps", fodmap: "Bas", fructose: "Bas", fibres: "Solubles", cg: "Bas", acidite: "Doux", graisses: "Maigre", lactose: "Sans", gluten: "Sans", texture: "Fondante", avantage: "Feuilles tendres et digestes.", inconvenient: "Les côtes blanches sont un peu fibreuses.", preparation: "Séparer le vert des côtes, émincer finement et cuire longuement.", notes: "", recettesList: [{nom: "Fondue de pak-choi au bouillon", url: ""}] },
+    { id: 31, nom: "Pak-choi", soustitre: "", type: "Légume", image: "", tolerance: "🟡 Moyen", saison: "Printemps", fodmap: "Bas", fructose: "Bas", fibres: "Solubles", cg: "Bas", acidite: "Doux", graisses: "Maigre", lactose: "Sans", gluten: "Sans", texture: "Fondante", avantage: "Feuilles tendres et digestes.", inconvenient: "Les côtes blanches sont un peu fibreuses.", preparation: "Séparer le vert des côtes, émincer finement et cuire longuement.", notes: "", recettesList: [] },
     { id: 120, nom: "Fraises", soustitre: "", type: "Fruit", image: "", tolerance: "🔴 À proscrire", saison: "Printemps", fodmap: "Haut", fructose: "Haut", fibres: "Insolubles", cg: "Bas", acidite: "Acide", graisses: "Maigre", lactose: "Sans", gluten: "Sans", texture: "Ferme", avantage: "Aucun.", inconvenient: "Petits pépins sur la peau.", preparation: "À éviter.", notes: "", recettesList: [] },
     { id: 210, nom: "Artichaut", soustitre: "", type: "Légume", image: "", tolerance: "🟡 Moyen", saison: "Printemps", fodmap: "Haut", fructose: "Haut", fibres: "Insolubles", cg: "Bas", acidite: "Doux", graisses: "Maigre", lactose: "Sans", gluten: "Sans", texture: "Ferme", avantage: "Cœur très tendre et riche en minéraux.", inconvenient: "Peut fermenter légèrement.", preparation: "Ne manger que le fond bien cuit.", notes: "", recettesList: [] },
     { id: 212, nom: "Rhubarbe", soustitre: "", type: "Fruit", image: "", tolerance: "🟡 Moyen", saison: "Printemps", fodmap: "Bas", fructose: "Bas", fibres: "Insolubles", cg: "Bas", acidite: "Acide", graisses: "Maigre", lactose: "Sans", gluten: "Sans", texture: "Fibreuse", avantage: "Stimule le transit en douceur.", inconvenient: "Fibres dures et très forte acidité.", preparation: "Peler soigneusement les fils, bien cuire en compote avec un peu de douceur.", notes: "", recettesList: [] },
@@ -2500,8 +2534,8 @@ const defaultData = [
 	{ id: 1024, nom: "Pois mange-tout", soustitre: "Pois gourmands", type: "Légume", image: "", tolerance: "🟡 Moyen", saison: "Printemps", fodmap: "Haut", fructose: "Bas", fibres: "Insolubles", cg: "Bas", acidite: "Doux", graisses: "Maigre", lactose: "Sans", gluten: "Sans", texture: "Ferme", avantage: "Croquant et riche en vitamines. Plus digeste que les petits pois classiques car les grains sont très jeunes.", inconvenient: "La cosse extérieure contient des fils fibreux et peut fermenter légèrement dans l'intestin.", preparation: "Indispensable d'équeuter et de retirer les deux fils latéraux avant cuisson. Cuisson rapide à la vapeur douce ou sauté minute.", notes: "", recettesList: [] },
 
     /* ÉTÉ */
-    { id: 6, nom: "Courgettes", soustitre: "", type: "Légume", image: "", tolerance: "🟢 Très conseillé", saison: "Été", fodmap: "Bas", fructose: "Bas", fibres: "Solubles", cg: "Bas", acidite: "Doux", graisses: "Maigre", lactose: "Sans", gluten: "Sans", texture: "Fondante", avantage: "Chair très digeste et riche en eau.", inconvenient: "La peau et les pépins irritent.", preparation: "Peler impérativement, retirer le cœur avec les pépins, cuire fondante.", notes: "", recettesList: [{nom: "Velouté de courgettes sans peau", url: ""}] },
-    { id: 7, nom: "Aubergine", soustitre: "", type: "Légume", image: "", tolerance: "🟢 Très conseillé", saison: "Été", fodmap: "Bas", fructose: "Bas", fibres: "Solubles", cg: "Bas", acidite: "Doux", graisses: "Maigre", lactose: "Sans", gluten: "Sans", texture: "Fondante", avantage: "Chair fondante.", inconvenient: "La peau et les nombreuses graines sont redoutables.", preparation: "Peler à vif, épépiner le plus possible, cuire très longtemps.", notes: "", recettesList: [{nom: "Caviar d'aubergine très doux", url: ""}] },
+    { id: 6, nom: "Courgettes", soustitre: "", type: "Légume", image: "", tolerance: "🟢 Très conseillé", saison: "Été", fodmap: "Bas", fructose: "Bas", fibres: "Solubles", cg: "Bas", acidite: "Doux", graisses: "Maigre", lactose: "Sans", gluten: "Sans", texture: "Fondante", avantage: "Chair très digeste et riche en eau.", inconvenient: "La peau et les pépins irritent.", preparation: "Peler impérativement, retirer le cœur avec les pépins, cuire fondante.", notes: "", recettesList: [] },
+    { id: 7, nom: "Aubergine", soustitre: "", type: "Légume", image: "", tolerance: "🟢 Très conseillé", saison: "Été", fodmap: "Bas", fructose: "Bas", fibres: "Solubles", cg: "Bas", acidite: "Doux", graisses: "Maigre", lactose: "Sans", gluten: "Sans", texture: "Fondante", avantage: "Chair fondante.", inconvenient: "La peau et les nombreuses graines sont redoutables.", preparation: "Peler à vif, épépiner le plus possible, cuire très longtemps.", notes: "", recettesList: [] },
     { id: 8, nom: "Haricots verts", soustitre: "", type: "Légume", image: "", tolerance: "🟡 Moyen", saison: "Été", fodmap: "Bas", fructose: "Bas", fibres: "Insolubles", cg: "Bas", acidite: "Doux", graisses: "Maigre", lactose: "Sans", gluten: "Sans", texture: "Fibreuse", avantage: "Apport en fibres solubles modéré.", inconvenient: "Les fils et les gros grains irritent.", preparation: "Choisir uniquement des extra-fins, cuire très tendres.", notes: "", recettesList: [] },
     { id: 9, nom: "Tomate", soustitre: "", type: "Légume", image: "", tolerance: "🟡 Moyen", saison: "Été", fodmap: "Bas", fructose: "Bas", fibres: "Insolubles", cg: "Bas", acidite: "Acide", graisses: "Maigre", lactose: "Sans", gluten: "Sans", texture: "Ferme", avantage: "Riche en eau.", inconvenient: "La peau et les pépins se logent dans les diverticules.", preparation: "Émonder, presser pour vider les pépins.", notes: "", recettesList: [] },
     { id: 10, nom: "Fenouil", soustitre: "", type: "Légume", image: "", tolerance: "🟡 Moyen", saison: "Été", fodmap: "Haut", fructose: "Haut", fibres: "Insolubles", cg: "Bas", acidite: "Doux", graisses: "Maigre", lactose: "Sans", gluten: "Sans", texture: "Fibreuse", avantage: "Ses huiles essentielles calment les spasmes.", inconvenient: "Extrêmement fibreux.", preparation: "Émincer à la mandoline, retirer le cœur dur, cuire braisée.", notes: "", recettesList: [] },
@@ -2511,7 +2545,7 @@ const defaultData = [
     { id: 14, nom: "Céleri-branche", soustitre: "", type: "Légume", image: "", tolerance: "🔴 À proscrire", saison: "Été", fodmap: "Haut", fructose: "Haut", fibres: "Insolubles", cg: "Bas", acidite: "Doux", graisses: "Maigre", lactose: "Sans", gluten: "Sans", texture: "Fibreuse", avantage: "Aucun.", inconvenient: "Longs fils solides.", preparation: "À éviter.", notes: "", recettesList: [] },
     { id: 102, nom: "Côtes de bettes", soustitre: "", type: "Légume", image: "", tolerance: "🟡 Moyen", saison: "Été", fodmap: "Bas", fructose: "Bas", fibres: "Insolubles", cg: "Bas", acidite: "Doux", graisses: "Maigre", lactose: "Sans", gluten: "Sans", texture: "Fibreuse", avantage: "Vitamines si bien préparé.", inconvenient: "Côtes très filandreuses.", preparation: "Ne garder que le vert tendre.", notes: "", recettesList: [] },
     { id: 108, nom: "Pimientos de Padrón", soustitre: "", type: "Légume", image: "", tolerance: "🔴 À proscrire", saison: "Été", fodmap: "Haut", fructose: "Bas", fibres: "Insolubles", cg: "Bas", acidite: "Acide", graisses: "Maigre", lactose: "Sans", gluten: "Sans", texture: "Ferme", avantage: "Aucun.", inconvenient: "Peau dure et pépins.", preparation: "À éviter.", notes: "", recettesList: [] },
-    { id: 110, nom: "Avocat", soustitre: "", type: "Légume", image: "", tolerance: "🟢 Très conseillé", saison: "Été", fodmap: "Haut", fructose: "Bas", fibres: "Solubles", cg: "Bas", acidite: "Doux", graisses: "Gras", lactose: "Sans", gluten: "Sans", texture: "Fondante", avantage: "Graisses saines et texture ultra-fondante.", inconvenient: "Riche en calories.", preparation: "Consommer bien mûr, nature ou écrasé.", notes: "", recettesList: [{nom: "Crème d'avocat", url: ""}] },
+    { id: 110, nom: "Avocat", soustitre: "", type: "Légume", image: "", tolerance: "🟢 Très conseillé", saison: "Été", fodmap: "Haut", fructose: "Bas", fibres: "Solubles", cg: "Bas", acidite: "Doux", graisses: "Gras", lactose: "Sans", gluten: "Sans", texture: "Fondante", avantage: "Graisses saines et texture ultra-fondante.", inconvenient: "Riche en calories.", preparation: "Consommer bien mûr, nature ou écrasé.", notes: "", recettesList: [] },
     { id: 111, nom: "Banane", soustitre: "", type: "Fruit", image: "", tolerance: "🟢 Très conseillé", saison: "Été", fodmap: "Bas", fructose: "Bas", fibres: "Solubles", cg: "Moyen", acidite: "Doux", graisses: "Maigre", lactose: "Sans", gluten: "Sans", texture: "Fondante", avantage: "Douce, riche en potassium.", inconvenient: "Préférer bien mûre.", preparation: "Consommer mûre, écrasée.", notes: "", recettesList: [] },
     { id: 118, nom: "Myrtilles", soustitre: "", type: "Fruit", image: "", tolerance: "🔴 À proscrire", saison: "Été", fodmap: "Bas", fructose: "Bas", fibres: "Insolubles", cg: "Bas", acidite: "Acide", graisses: "Maigre", lactose: "Sans", gluten: "Sans", texture: "Ferme", avantage: "Aucun.", inconvenient: "Petits pépins. Pivilégier la Compote", preparation: "À éviter.", notes: "", recettesList: [] },
     { id: 119, nom: "Framboises", soustitre: "", type: "Fruit", image: "", tolerance: "🔴 À proscrire", saison: "Été", fodmap: "Haut", fructose: "Haut", fibres: "Insolubles", cg: "Bas", acidite: "Acide", graisses: "Maigre", lactose: "Sans", gluten: "Sans", texture: "Ferme", avantage: "Aucun.", inconvenient: "Petits akènes durs.", preparation: "À éviter.", notes: "", recettesList: [] },
@@ -2536,19 +2570,19 @@ const defaultData = [
     { id: 960, nom: "Coulis de tomate cuit", soustitre: "Sans Pépins", type: "Légume", image: "", tolerance: "🟡 Moyen", saison: "Été", fodmap: "Bas", fructose: "Bas", fibres: "Solubles", cg: "Bas", acidite: "Acide", graisses: "Maigre", lactose: "Sans", gluten: "Sans", texture: "Fondante", avantage: "Saveur sans peau ni graines.", inconvenient: "Reste acide pour l'estomac.", preparation: "Passer au tamis fin après cuisson.", notes: "", recettesList: [] },
 
     /* AUTOMNE */
-    { id: 15, nom: "Courge Butternut", soustitre: "", type: "Légume", image: "", tolerance: "🟢 Très conseillé", saison: "Automne", fodmap: "Bas", fructose: "Bas", fibres: "Solubles", cg: "Bas", acidite: "Doux", graisses: "Maigre", lactose: "Sans", gluten: "Sans", texture: "Fondante", avantage: "Texture veloutée, fibres douces.", inconvenient: "Peau épaisse.", preparation: "Peler, évider les graines, cuire au four ou en soupe.", notes: "", recettesList: [{nom: "Soupe de butternut", url: ""}] },
+    { id: 15, nom: "Courge Butternut", soustitre: "", type: "Légume", image: "", tolerance: "🟢 Très conseillé", saison: "Automne", fodmap: "Bas", fructose: "Bas", fibres: "Solubles", cg: "Bas", acidite: "Doux", graisses: "Maigre", lactose: "Sans", gluten: "Sans", texture: "Fondante", avantage: "Texture veloutée, fibres douces.", inconvenient: "Peau épaisse.", preparation: "Peler, évider les graines, cuire au four ou en soupe.", notes: "", recettesList: [] },
     { id: 16, nom: "Potiron", soustitre: "", type: "Légume", image: "", tolerance: "🟢 Très conseillé", saison: "Automne", fodmap: "Bas", fructose: "Bas", fibres: "Solubles", cg: "Bas", acidite: "Doux", graisses: "Maigre", lactose: "Sans", gluten: "Sans", texture: "Fondante", avantage: "Très doux pour les intestins.", inconvenient: "Graines irritantes.", preparation: "Peler soigneusement, faire en velouté.", notes: "", recettesList: [] },
     { id: 21, nom: "Navet", soustitre: "", type: "Légume", image: "", tolerance: "🟡 Moyen", saison: "Automne", fodmap: "Haut", fructose: "Bas", fibres: "Insolubles", cg: "Bas", acidite: "Doux", graisses: "Maigre", lactose: "Sans", gluten: "Sans", texture: "Ferme", avantage: "Racine fondante.", inconvenient: "Tendance à fermenter.", preparation: "Peler, cuire à l'eau.", notes: "", recettesList: [] },
-    { id: 23, nom: "Carottes", soustitre: "", type: "Légume", image: "", tolerance: "🟢 Très conseillé", saison: "Automne", fodmap: "Bas", fructose: "Bas", fibres: "Solubles", cg: "Bas", acidite: "Doux", graisses: "Maigre", lactose: "Sans", gluten: "Sans", texture: "Fondante", avantage: "Fibres douces (pectine).", inconvenient: "Aucun.", preparation: "Peler, couper en rondelles, bien cuire.", notes: "", recettesList: [{nom: "Carottes fondantes", url: ""}] },
+    { id: 23, nom: "Carottes", soustitre: "", type: "Légume", image: "", tolerance: "🟢 Très conseillé", saison: "Automne", fodmap: "Bas", fructose: "Bas", fibres: "Solubles", cg: "Bas", acidite: "Doux", graisses: "Maigre", lactose: "Sans", gluten: "Sans", texture: "Fondante", avantage: "Fibres douces (pectine).", inconvenient: "Aucun.", preparation: "Peler, couper en rondelles, bien cuire.", notes: "", recettesList: [] },
     { id: 26, nom: "Betterave rouge", soustitre: "", type: "Légume", image: "", tolerance: "🟢 Très conseillé", saison: "Automne", fodmap: "Haut", fructose: "Bas", fibres: "Solubles", cg: "Moyen", acidite: "Doux", graisses: "Maigre", lactose: "Sans", gluten: "Sans", texture: "Fondante", avantage: "Fibres très douces.", inconvenient: "Colore les selles.", preparation: "Acheter sous vide ou cuire longuement.", notes: "", recettesList: [] },
     { id: 105, nom: "Chanterelles", soustitre: "", type: "Légume", image: "", tolerance: "🟡 Moyen", saison: "Automne", fodmap: "Haut", fructose: "Bas", fibres: "Insolubles", cg: "Bas", acidite: "Doux", graisses: "Maigre", lactose: "Sans", gluten: "Sans", texture: "Ferme", avantage: "Goût boisé.", inconvenient: "Chair dense.", preparation: "Hacher menu, cuire longuement.", notes: "", recettesList: [] },
     { id: 106, nom: "Chou rouge", soustitre: "", type: "Légume", image: "", tolerance: "🔴 À proscrire", saison: "Automne", fodmap: "Haut", fructose: "Bas", fibres: "Insolubles", cg: "Bas", acidite: "Doux", graisses: "Maigre", lactose: "Sans", gluten: "Sans", texture: "Ferme", avantage: "Aucun.", inconvenient: "Fibres dures et fermentescibles.", preparation: "À éviter.", notes: "", recettesList: [] },
     { id: 107, nom: "Chou chinois", soustitre: "", type: "Légume", image: "", tolerance: "🟡 Moyen", saison: "Automne", fodmap: "Haut", fructose: "Bas", fibres: "Solubles", cg: "Bas", acidite: "Doux", graisses: "Maigre", lactose: "Sans", gluten: "Sans", texture: "Fondante", avantage: "Plus digeste que les autres choux.", inconvenient: "Peut causer des gaz.", preparation: "Cuire longuement en soupe.", notes: "", recettesList: [] },
     { id: 109, nom: "Pleurotes", soustitre: "", type: "Légume", image: "", tolerance: "🟡 Moyen", saison: "Automne", fodmap: "Haut", fructose: "Bas", fibres: "Insolubles", cg: "Bas", acidite: "Doux", graisses: "Maigre", lactose: "Sans", gluten: "Sans", texture: "Ferme", avantage: "Saveur agréable.", inconvenient: "Texture spongieuse.", preparation: "Hacher finement et bien cuire.", notes: "", recettesList: [] },
-    { id: 112, nom: "Pommes", soustitre: "Jazz - Gala - Golden", type: "Fruit", image: "", tolerance: "🟢 Très conseillé", saison: "Automne", fodmap: "Haut", fructose: "Haut", fibres: "Solubles", cg: "Moyen", acidite: "Doux", graisses: "Maigre", lactose: "Sans", gluten: "Sans", texture: "Fondante", avantage: "Riches en pectine.", inconvenient: "Peau et pépins.", preparation: "Peler impérativement, cuire en compote.", notes: "", recettesList: [{nom: "Compote maison", url: ""}] },
-    { id: 113, nom: "Poires", soustitre: "", type: "Fruit", image: "", tolerance: "🟢 Très conseillé", saison: "Automne", fodmap: "Haut", fructose: "Haut", fibres: "Solubles", cg: "Moyen", acidite: "Doux", graisses: "Maigre", lactose: "Sans", gluten: "Sans", texture: "Fondante", avantage: "Chair fondante.", inconvenient: "Peau granuleuse.", preparation: "Peler soigneusement, consommer pochée.", notes: "", recettesList: [{nom: "Poire pochée", url: ""}] },
+    { id: 112, nom: "Pommes", soustitre: "Jazz - Gala - Golden", type: "Fruit", image: "", tolerance: "🟢 Très conseillé", saison: "Automne", fodmap: "Haut", fructose: "Haut", fibres: "Solubles", cg: "Moyen", acidite: "Doux", graisses: "Maigre", lactose: "Sans", gluten: "Sans", texture: "Fondante", avantage: "Riches en pectine.", inconvenient: "Peau et pépins.", preparation: "Peler impérativement, cuire en compote.", notes: "", recettesList: [] },
+    { id: 113, nom: "Poires", soustitre: "", type: "Fruit", image: "", tolerance: "🟢 Très conseillé", saison: "Automne", fodmap: "Haut", fructose: "Haut", fibres: "Solubles", cg: "Moyen", acidite: "Doux", graisses: "Maigre", lactose: "Sans", gluten: "Sans", texture: "Fondante", avantage: "Chair fondante.", inconvenient: "Peau granuleuse.", preparation: "Peler soigneusement, consommer pochée.", notes: "", recettesList: [] },
     { id: 122, nom: "Raisins", soustitre: "", type: "Fruit", image: "", tolerance: "🔴 À proscrire", saison: "Automne", fodmap: "Haut", fructose: "Haut", fibres: "Insolubles", cg: "Moyen", acidite: "Acide", graisses: "Maigre", lactose: "Sans", gluten: "Sans", texture: "Ferme", avantage: "Aucun.", inconvenient: "Peau épaisse et pépins.", preparation: "À éviter.", notes: "", recettesList: [] },
-    { id: 130, nom: "Pruneaux", soustitre: "", type: "Fruit", image: "", tolerance: "🟡 Moyen", saison: "Automne", fodmap: "Haut", fructose: "Haut", fibres: "Solubles", cg: "Moyen", acidite: "Doux", graisses: "Maigre", lactose: "Sans", gluten: "Sans", texture: "Fondante", avantage: "Régulateur naturel du transit.", inconvenient: "Peau résistante.", preparation: "Consommer en purée.", notes: "", recettesList: [{nom: "Purée de pruneaux", url: ""}] },
+    { id: 130, nom: "Pruneaux", soustitre: "", type: "Fruit", image: "", tolerance: "🟡 Moyen", saison: "Automne", fodmap: "Haut", fructose: "Haut", fibres: "Solubles", cg: "Moyen", acidite: "Doux", graisses: "Maigre", lactose: "Sans", gluten: "Sans", texture: "Fondante", avantage: "Régulateur naturel du transit.", inconvenient: "Peau résistante.", preparation: "Consommer en purée.", notes: "", recettesList: [] },
     { id: 135, nom: "Figue", soustitre: "", type: "Fruit", image: "", tolerance: "🔴 À proscrire", saison: "Automne", fodmap: "Haut", fructose: "Haut", fibres: "Insolubles", cg: "Moyen", acidite: "Doux", graisses: "Maigre", lactose: "Sans", gluten: "Sans", texture: "Ferme", avantage: "Aucun.", inconvenient: "Petits grains durs.", preparation: "À éviter.", notes: "", recettesList: [] },
     { id: 208, nom: "Bolet seche", soustitre: "", type: "Légume", image: "", tolerance: "🟡 Moyen", saison: "Automne", fodmap: "Haut", fructose: "Bas", fibres: "Insolubles", cg: "Bas", acidite: "Doux", graisses: "Maigre", lactose: "Sans", gluten: "Sans", texture: "Ferme", avantage: "Très parfumé.", inconvenient: "Fibres dures.", preparation: "Réhydrater longuement avant cuisson.", notes: "", recettesList: [] },
     { id: 209, nom: "Morille sechee", soustitre: "", type: "Légume", image: "", tolerance: "🟡 Moyen", saison: "Automne", fodmap: "Haut", fructose: "Bas", fibres: "Insolubles", cg: "Bas", acidite: "Doux", graisses: "Maigre", lactose: "Sans", gluten: "Sans", texture: "Ferme", avantage: "Saveur exceptionnelle.", inconvenient: "Toxique crue.", preparation: "Réhydrater et cuire impérativement.", notes: "", recettesList: [] },
@@ -2562,7 +2596,7 @@ const defaultData = [
     { id: 1007, nom: "Citrouille", soustitre: "Générique", type: "Légume", image: "", tolerance: "🟢 Très conseillé", saison: "Automne", fodmap: "Bas", fructose: "Bas", fibres: "Solubles", cg: "Bas", acidite: "Doux", graisses: "Maigre", lactose: "Sans", gluten: "Sans", texture: "Fondante", avantage: "Pectines douces pour l'intestin.", inconvenient: "Aucun.", preparation: "En purée ou velouté sans la peau.", notes: "", recettesList: [] },
 
     /* HIVER */
-    { id: 18, nom: "Blanc de poireau", soustitre: "", type: "Légume", image: "", tolerance: "🟢 Très conseillé", saison: "Hiver", fodmap: "Haut", fructose: "Bas", fibres: "Solubles", cg: "Bas", acidite: "Doux", graisses: "Maigre", lactose: "Sans", gluten: "Sans", texture: "Fondante", avantage: "Partie tendre et savoureuse.", inconvenient: "Le vert est trop fibreux.", preparation: "Jeter le vert, émincer finement le blanc.", notes: "", recettesList: [{nom: "Fondue de poireaux", url: ""}] },
+    { id: 18, nom: "Blanc de poireau", soustitre: "", type: "Légume", image: "", tolerance: "🟢 Très conseillé", saison: "Hiver", fodmap: "Haut", fructose: "Bas", fibres: "Solubles", cg: "Bas", acidite: "Doux", graisses: "Maigre", lactose: "Sans", gluten: "Sans", texture: "Fondante", avantage: "Partie tendre et savoureuse.", inconvenient: "Le vert est trop fibreux.", preparation: "Jeter le vert, émincer finement le blanc.", notes: "", recettesList: [] },
     { id: 19, nom: "Céleri-rave", soustitre: "", type: "Légume", image: "", tolerance: "🟡 Moyen", saison: "Hiver", fodmap: "Haut", fructose: "Bas", fibres: "Insolubles", cg: "Bas", acidite: "Doux", graisses: "Maigre", lactose: "Sans", gluten: "Sans", texture: "Fibreuse", avantage: "Bon goût de bouillon.", inconvenient: "Texture filandreuse.", preparation: "Peler très épais, mixer finement en potage.", notes: "", recettesList: [] },
     { id: 20, nom: "Endive", soustitre: "", type: "Légume", image: "", tolerance: "🟡 Moyen", saison: "Hiver", fodmap: "Bas", fructose: "Bas", fibres: "Insolubles", cg: "Bas", acidite: "Doux", graisses: "Maigre", lactose: "Sans", gluten: "Sans", texture: "Ferme", avantage: "Pratique en hiver.", inconvenient: "Crue, elle est indigeste.", preparation: "Retirer le cône amer, cuire braisée.", notes: "", recettesList: [] },
     { id: 22, nom: "Chou vert frisé", soustitre: "", type: "Légume", image: "", tolerance: "🔴 À proscrire", saison: "Hiver", fodmap: "Haut", fructose: "Bas", fibres: "Insolubles", cg: "Bas", acidite: "Doux", graisses: "Maigre", lactose: "Sans", gluten: "Sans", texture: "Ferme", avantage: "Aucun.", inconvenient: "Fermente énormément.", preparation: "À éviter totalement.", notes: "", recettesList: [] },
@@ -2572,7 +2606,7 @@ const defaultData = [
     { id: 30, nom: "Oignon ail", soustitre: "", type: "Légume", image: "", tolerance: "🔴 À proscrire", saison: "Hiver", fodmap: "Haut", fructose: "Haut", fibres: "Insolubles", cg: "Bas", acidite: "Acide", graisses: "Maigre", lactose: "Sans", gluten: "Sans", texture: "Ferme", avantage: "Bon goût.", inconvenient: "Provoquent gaz et spasmes forts.", preparation: "Ne pas les manger.", notes: "", recettesList: [] },
     { id: 32, nom: "Chou kale", soustitre: "", type: "Légume", image: "", tolerance: "🔴 À proscrire", saison: "Hiver", fodmap: "Haut", fructose: "Bas", fibres: "Insolubles", cg: "Bas", acidite: "Doux", graisses: "Maigre", lactose: "Sans", gluten: "Sans", texture: "Fibreuse", avantage: "Aucun.", inconvenient: "Feuilles extremement coriaces.", preparation: "À éviter.", notes: "", recettesList: [] },
     { id: 103, nom: "Choux de Bruxelles", soustitre: "", type: "Légume", image: "", tolerance: "🔴 À proscrire", saison: "Hiver", fodmap: "Haut", fructose: "Bas", fibres: "Insolubles", cg: "Bas", acidite: "Doux", graisses: "Maigre", lactose: "Sans", gluten: "Sans", texture: "Ferme", avantage: "Aucun.", inconvenient: "Extrêmement fermentescible.", preparation: "À éviter.", notes: "", recettesList: [] },
-    { id: 104, nom: "Poireaux", soustitre: "", type: "Légume", image: "", tolerance: "🟢 Très conseillé", saison: "Hiver", fodmap: "Haut", fructose: "Bas", fibres: "Solubles", cg: "Bas", acidite: "Doux", graisses: "Maigre", lactose: "Sans", gluten: "Sans", texture: "Fondante", avantage: "Blanc fondant une fois cuit.", inconvenient: "Le vert est trop fibreux.", preparation: "Utiliser uniquement le blanc.", notes: "", recettesList: [{nom: "Fondue douce", url: ""}] },
+    { id: 104, nom: "Poireaux", soustitre: "", type: "Légume", image: "", tolerance: "🟢 Très conseillé", saison: "Hiver", fodmap: "Haut", fructose: "Bas", fibres: "Solubles", cg: "Bas", acidite: "Doux", graisses: "Maigre", lactose: "Sans", gluten: "Sans", texture: "Fondante", avantage: "Blanc fondant une fois cuit.", inconvenient: "Le vert est trop fibreux.", preparation: "Utiliser uniquement le blanc.", notes: "", recettesList: [] },
     { id: 114, nom: "Oranges", soustitre: "", type: "Fruit", image: "", tolerance: "🟡 Moyen", saison: "Hiver", fodmap: "Bas", fructose: "Bas", fibres: "Insolubles", cg: "Moyen", acidite: "Acide", graisses: "Maigre", lactose: "Sans", gluten: "Sans", texture: "Ferme", avantage: "Vitamine C.", inconvenient: "Acidité et membranes.", preparation: "Jus filtré ou quartiers à vif.", notes: "", recettesList: [] },
     { id: 115, nom: "Clémentines", soustitre: "", type: "Fruit", image: "", tolerance: "🟡 Moyen", saison: "Hiver", fodmap: "Bas", fructose: "Bas", fibres: "Insolubles", cg: "Moyen", acidite: "Acide", graisses: "Maigre", lactose: "Sans", gluten: "Sans", texture: "Ferme", avantage: "Faciles à portionner.", inconvenient: "Peaux transparentes.", preparation: "Bien peler.", notes: "", recettesList: [] },
     { id: 116, nom: "Mandarines", soustitre: "", type: "Fruit", image: "", tolerance: "🟡 Moyen", saison: "Hiver", fodmap: "Bas", fructose: "Bas", fibres: "Insolubles", cg: "Moyen", acidite: "Acide", graisses: "Maigre", lactose: "Sans", gluten: "Sans", texture: "Ferme", avantage: "Goût prononcé.", inconvenient: "Présence de pépins.", preparation: "Retirer pépins et peaux.", notes: "", recettesList: [] },
@@ -2591,7 +2625,7 @@ const defaultData = [
     { id: 34, nom: "Haricots rouges", soustitre: "", type: "Légumineuse", image: "", tolerance: "🔴 À proscrire", saison: "Légumineuses", fodmap: "Haut", fructose: "Bas", fibres: "Insolubles", cg: "Moyen", acidite: "Doux", graisses: "Maigre", lactose: "Sans", gluten: "Sans", texture: "Ferme", avantage: "Aucun.", inconvenient: "Peau épaisse et forte fermentation.", preparation: "À éviter.", notes: "", recettesList: [] },
     { id: 35, nom: "Haricots blancs", soustitre: "", type: "Légumineuse", image: "", tolerance: "🟡 Moyen", saison: "Légumineuses", fodmap: "Haut", fructose: "Bas", fibres: "Insolubles", cg: "Moyen", acidite: "Doux", graisses: "Maigre", lactose: "Sans", gluten: "Sans", texture: "Ferme", avantage: "Riches en protéines végétales.", inconvenient: "Enveloppe dure.", preparation: "Les consommer sans leur peau, écrasés.", notes: "", recettesList: [] },
     { id: 211, nom: "Fèves", soustitre: "", type: "Légumineuse", image: "", tolerance: "🔴 À proscrire", saison: "Légumineuses", fodmap: "Haut", fructose: "Bas", fibres: "Insolubles", cg: "Moyen", acidite: "Doux", graisses: "Maigre", lactose: "Sans", gluten: "Sans", texture: "Ferme", avantage: "Aucun.", inconvenient: "Peau épaisse, très fermentescible et lourde à digérer.", preparation: "À éviter.", notes: "", recettesList: [] },
-    { id: 36, nom: "Lentilles corail", soustitre: "", type: "Légumineuse", image: "", tolerance: "🟢 Très conseillé", saison: "Légumineuses", fodmap: "Bas", fructose: "Bas", fibres: "Solubles", cg: "Bas", acidite: "Doux", graisses: "Maigre", lactose: "Sans", gluten: "Sans", texture: "Fondante", avantage: "Sans enveloppe irritante, très digestes.", inconvenient: "Aucun si bien cuites.", preparation: "Cuire jusqu'à obtention d'une purée fondante.", notes: "", recettesList: [{nom: "Dahl de lentilles corail", url: ""}] },
+    { id: 36, nom: "Lentilles corail", soustitre: "", type: "Légumineuse", image: "", tolerance: "🟢 Très conseillé", saison: "Légumineuses", fodmap: "Bas", fructose: "Bas", fibres: "Solubles", cg: "Bas", acidite: "Doux", graisses: "Maigre", lactose: "Sans", gluten: "Sans", texture: "Fondante", avantage: "Sans enveloppe irritante, très digestes.", inconvenient: "Aucun si bien cuites.", preparation: "Cuire jusqu'à obtention d'une purée fondante.", notes: "", recettesList: [] },
     { id: 37, nom: "Lentilles noires", soustitre: "", type: "Légumineuse", image: "", tolerance: "🔴 À proscrire", saison: "Légumineuses", fodmap: "Haut", fructose: "Bas", fibres: "Insolubles", cg: "Bas", acidite: "Doux", graisses: "Maigre", lactose: "Sans", gluten: "Sans", texture: "Ferme", avantage: "Aucun.", inconvenient: "Petites peaux dures.", preparation: "À éviter.", notes: "", recettesList: [] },
     { id: 38, nom: "Lentilles vertes", soustitre: "", type: "Légumineuse", image: "", tolerance: "🔴 À proscrire", saison: "Légumineuses", fodmap: "Haut", fructose: "Bas", fibres: "Insolubles", cg: "Bas", acidite: "Doux", graisses: "Maigre", lactose: "Sans", gluten: "Sans", texture: "Ferme", avantage: "Aucun.", inconvenient: "Peau dure et fibres agressives.", preparation: "À éviter.", notes: "", recettesList: [] },
     { id: 206, nom: "Toor dal", soustitre: "", type: "Légumineuse", image: "", tolerance: "🟡 Moyen", saison: "Légumineuses", fodmap: "Haut", fructose: "Bas", fibres: "Insolubles", cg: "Bas", acidite: "Doux", graisses: "Maigre", lactose: "Sans", gluten: "Sans", texture: "Ferme", avantage: "Protéines végétales.", inconvenient: "Peut fermenter.", preparation: "Bien tremper et cuire longuement.", notes: "", recettesList: [] },
@@ -2605,7 +2639,7 @@ const defaultData = [
 
     /* FÉCULENTS */
     { id: 218, nom: "Pomme de terre primeur", soustitre: "", type: "Féculent", image: "", tolerance: "🟢 Très conseillé", saison: "Féculents", fodmap: "Bas", fructose: "Bas", fibres: "Solubles", cg: "Moyen", acidite: "Doux", graisses: "Maigre", lactose: "Sans", gluten: "Sans", texture: "Fondante", avantage: "Amidon jeune très digeste, chair fondante.", inconvenient: "La petite pellicule (peau).", preparation: "Gratter la peau, cuire à l'eau ou vapeur.", notes: "", recettesList: [] },
-    { id: 24, nom: "Pomme de terre", soustitre: "", type: "Féculent", image: "", tolerance: "🟢 Très conseillé", saison: "Féculents", fodmap: "Bas", fructose: "Bas", fibres: "Solubles", cg: "Élevé", acidite: "Doux", graisses: "Maigre", lactose: "Sans", gluten: "Sans", texture: "Fondante", avantage: "Amidon doux, sans résidus.", inconvenient: "La peau est dure.", preparation: "Peler systématiquement, écraser en purée.", notes: "", recettesList: [{nom: "Purée maison", url: ""}] },
+    { id: 24, nom: "Pomme de terre", soustitre: "", type: "Féculent", image: "", tolerance: "🟢 Très conseillé", saison: "Féculents", fodmap: "Bas", fructose: "Bas", fibres: "Solubles", cg: "Élevé", acidite: "Doux", graisses: "Maigre", lactose: "Sans", gluten: "Sans", texture: "Fondante", avantage: "Amidon doux, sans résidus.", inconvenient: "La peau est dure.", preparation: "Peler systématiquement, écraser en purée.", notes: "", recettesList: [] },
     { id: 25, nom: "Patate douce", soustitre: "", type: "Féculent", image: "", tolerance: "🟢 Très conseillé", saison: "Féculents", fodmap: "Bas", fructose: "Bas", fibres: "Solubles", cg: "Moyen", acidite: "Doux", graisses: "Maigre", lactose: "Sans", gluten: "Sans", texture: "Fondante", avantage: "Nutritive, très bien tolérée.", inconvenient: "Légèrement plus fibreuse.", preparation: "Peler, cuire longuement.", notes: "", recettesList: [] },
     { id: 17, nom: "Panais", soustitre: "", type: "Féculent", image: "", tolerance: "🟢 Très conseillé", saison: "Féculents", fodmap: "Bas", fructose: "Bas", fibres: "Solubles", cg: "Moyen", acidite: "Doux", graisses: "Maigre", lactose: "Sans", gluten: "Sans", texture: "Fondante", avantage: "Racine douce, alternative à la pdt.", inconvenient: "Cœur parfois dur.", preparation: "Peler, retirer le cœur, cuire en purée.", notes: "", recettesList: [] },
     { id: 222, nom: "Topinambour", soustitre: "", type: "Féculent", image: "", tolerance: "🔴 À proscrire", saison: "Féculents", fodmap: "Haut", fructose: "Bas", fibres: "Insolubles", cg: "Bas", acidite: "Doux", graisses: "Maigre", lactose: "Sans", gluten: "Sans", texture: "Ferme", avantage: "Aucun.", inconvenient: "Extrêmement riche en inuline, gaz sévères et douleurs.", preparation: "À éviter absolument.", notes: "", recettesList: [] },
@@ -2617,7 +2651,7 @@ const defaultData = [
     { id: 205, nom: "Polenta", soustitre: "", type: "Féculent", image: "", tolerance: "🟢 Très conseillé", saison: "Féculents", fodmap: "Bas", fructose: "Bas", fibres: "Insolubles", cg: "Élevé", acidite: "Doux", graisses: "Maigre", lactose: "Sans", gluten: "Sans", texture: "Fondante", avantage: "Doux pour l'intestin.", inconvenient: "Aucun.", preparation: "Cuire dans l'eau ou bouillon.", notes: "", recettesList: [] },
     { id: 207, nom: "Quinoa", soustitre: "", type: "Féculent", image: "", tolerance: "🟢 Très conseillé", saison: "Féculents", fodmap: "Bas", fructose: "Bas", fibres: "Insolubles", cg: "Bas", acidite: "Doux", graisses: "Maigre", lactose: "Sans", gluten: "Sans", texture: "Ferme", avantage: "Protéines complètes.", inconvenient: "Saponine irritante si mal rincé.", preparation: "Bien rincer à l'eau claire avant cuisson.", notes: "", recettesList: [] },
     { id: 223, nom: "Pâtes", soustitre: "", type: "Féculent", image: "", tolerance: "🟡 Moyen", saison: "Féculents", fodmap: "Haut", fructose: "Bas", fibres: "Insolubles", cg: "Moyen", acidite: "Doux", graisses: "Maigre", lactose: "Sans", gluten: "Avec", texture: "Ferme", avantage: "Rapide et énergétique.", inconvenient: "Contient du gluten, digestion parfois lourde.", preparation: "Préférer une cuisson al dente pour un index glycémique plus bas et une meilleure digestion.", notes: "", recettesList: [] },
-    { id: 224, nom: "Nouilles de riz", soustitre: "", type: "Féculent", image: "", tolerance: "🟢 Très conseillé", saison: "Féculents", fodmap: "Bas", fructose: "Bas", fibres: "Solubles", cg: "Moyen", acidite: "Doux", graisses: "Maigre", lactose: "Sans", gluten: "Sans", texture: "Fondante", avantage: "Sans gluten, texture très douce et légère pour le système digestif.", inconvenient: "Aucun.", preparation: "Cuire quelques minutes à l'eau frémissante.", notes: "", recettesList: [{nom: "Idéal pour préparer un délicieux Pad Thaï maison.", url: ""}] },
+    { id: 224, nom: "Nouilles de riz", soustitre: "", type: "Féculent", image: "", tolerance: "🟢 Très conseillé", saison: "Féculents", fodmap: "Bas", fructose: "Bas", fibres: "Solubles", cg: "Moyen", acidite: "Doux", graisses: "Maigre", lactose: "Sans", gluten: "Sans", texture: "Fondante", avantage: "Sans gluten, texture très douce et légère pour le système digestif.", inconvenient: "Aucun.", preparation: "Cuire quelques minutes à l'eau frémissante.", notes: "", recettesList: [] },
     { id: 225, nom: "Riz basmati", soustitre: "", type: "Féculent", image: "", tolerance: "🟢 Très conseillé", saison: "Féculents", fodmap: "Bas", fructose: "Bas", fibres: "Solubles", cg: "Moyen", acidite: "Doux", graisses: "Maigre", lactose: "Sans", gluten: "Sans", texture: "Fondante", avantage: "Très digeste, index glycémique plus bas que les autres riz blancs.", inconvenient: "Aucun.", preparation: "Rincer à l'eau froide pour enlever l'excès d'amidon avant cuisson.", notes: "", recettesList: [] },
     { id: 226, nom: "Riz au jasmin", soustitre: "", type: "Féculent", image: "", tolerance: "🟢 Très conseillé", saison: "Féculents", fodmap: "Bas", fructose: "Bas", fibres: "Solubles", cg: "Élevé", acidite: "Doux", graisses: "Maigre", lactose: "Sans", gluten: "Sans", texture: "Fondante", avantage: "Texture tendre, légèrement collante et très parfumée.", inconvenient: "Charge glycémique assez élevée.", preparation: "Rincer avant cuisson.", notes: "", recettesList: [] },
     { id: 227, nom: "Riz classique", soustitre: "", type: "Féculent", image: "", tolerance: "🟢 Très conseillé", saison: "Féculents", fodmap: "Bas", fructose: "Bas", fibres: "Solubles", cg: "Moyen", acidite: "Doux", graisses: "Maigre", lactose: "Sans", gluten: "Sans", texture: "Ferme", avantage: "Les vitamines pénètrent dans le grain grâce à la vapeur. Ne colle pas.", inconvenient: "Texture un peu plus ferme nécessitant une bonne mastication.", preparation: "Cuisson classique à l'eau.", notes: "", recettesList: [] },
@@ -3462,6 +3496,10 @@ function initData() {
 
         // NOUVEAU : On calcule le total absolu de la base
     const totalBase = legumes.length;
+	
+	// NOUVEAU : On calcule le total des recettes sauvegardées
+        let totalRecettes = 0;
+        legumes.forEach(l => { if (l.recettesList) totalRecettes += l.recettesList.length; });
 
     menuContainer.innerHTML = `
         <!-- NOUVEAU : SOUS-TITRE COMPTEUR TOTAL -->
@@ -3496,6 +3534,7 @@ function initData() {
                 <img src="icones/recommandes_02.png" alt="Adaptés" style="width: 58px;">
             </button>
         </div>
+				
             <!-- 2. Fruits & Légumes (Cadre) -->
             <div class="fruits-legumes-cadre">
                 <div class="category-title">Fruits & Légumes</div>
@@ -3533,6 +3572,30 @@ function initData() {
     <div class="saison-btn-count">${cBo} éléments</div>
 </button>
 
+			<!-- SÉPARATEUR ÉLÉGANT (Marges réduites de 50%) -->
+            <div style="display: flex; align-items: center; justify-content: center; margin: 18px 0 12px 0; opacity: 0.4;">
+                <div style="height: 1px; background: var(--accent-dark); flex: 1; max-width: 80px;"></div>
+                <span style="margin: 0 15px; color: var(--accent-dark); font-size: 1.2rem;">✧</span>
+                <div style="height: 1px; background: var(--accent-dark); flex: 1; max-width: 80px;"></div>
+            </div>
+
+            <!-- LE CARNET DE RECETTES (ILLUSTRATION CENTRÉE ET RÉDUITE) -->
+            <div style="text-align: center; margin-bottom: 10px; cursor: pointer; transition: transform 0.3s ease;" onclick="ouvrirCarnetRecettes()" onmouseover="this.style.transform='scale(1.03)'" onmouseout="this.style.transform='scale(1)'">
+                
+                <!-- L'illustration (Marge basse réduite à 4px) -->
+                <img src="icones/carnet_recette.png" alt="Mes Recettes" style="width: 65px; height: auto; filter: drop-shadow(0 4px 8px rgba(44, 62, 80, 0.06)); margin-bottom: 4px;">
+                
+                <!-- Le Titre -->
+                <div style="font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 700; color: var(--text-title); letter-spacing: 0.5px; margin-bottom: 4px;">
+                    Mes Recettes
+                </div>
+                
+                <!-- Le Compteur -->
+                <div style="display: inline-block; font-family: 'Nunito', sans-serif; font-size: 0.65rem; font-weight: 800; color: var(--accent-dark); text-transform: uppercase; letter-spacing: 1px; background: rgba(212, 163, 115, 0.12); padding: 3px 10px; border-radius: 15px;">
+                    ${totalRecettes} sauvegardée(s)
+                </div>
+                
+            </div>
 
         `;
     }
@@ -6442,13 +6505,19 @@ function fermerModalRecetteSmart() {
     const modal = document.getElementById('modal-recipe-search');
     if (modal) modal.style.display = 'none';
 
-    // AIMANT : On replace immédiatement l'écran sur la fiche que tu consultais !
-    if (alimentRecetteActif) {
-        const carteCible = document.querySelector(`button[onclick*="openForm(${alimentRecetteActif.id})"]`)?.closest('.card');
-        if (carteCible) {
-            const hauteurBandeau = document.querySelector('.sticky-header')?.offsetHeight || 180;
-            const positionCible = carteCible.getBoundingClientRect().top + window.scrollY - hauteurBandeau - 55;
-            window.scrollTo({ top: Math.max(0, positionCible), behavior: 'instant' });
+    if (vientDuCarnet) {
+        // Si on venait du carnet, on y retourne !
+        vientDuCarnet = false; // On réinitialise la mémoire
+        ouvrirCarnetRecettes();
+    } else {
+        // Sinon, AIMANT : On replace immédiatement l'écran sur la fiche que tu consultais !
+        if (alimentRecetteActif) {
+            const carteCible = document.querySelector(`button[onclick*="openForm(${alimentRecetteActif.id})"]`)?.closest('.card');
+            if (carteCible) {
+                const hauteurBandeau = document.querySelector('.sticky-header')?.offsetHeight || 180;
+                const positionCible = carteCible.getBoundingClientRect().top + window.scrollY - hauteurBandeau - 55;
+                window.scrollTo({ top: Math.max(0, positionCible), behavior: 'instant' });
+            }
         }
     }
 }
@@ -6467,11 +6536,14 @@ function ouvrirLecteurRecetteInApp(alimentId, indexRecette) {
     const btnSave = document.getElementById('btn-enregistrer-recette');
     if (btnSave) btnSave.style.display = 'none';
 
-    // RÈGLE 2 : On vient de la fiche -> On cache "Retour", on affiche "Fermer"
+    // RÈGLE 2 : On vient de la fiche -> On cache "Retour", on affiche "Fermer" ou "Retour au Carnet"
     const btnRetour = document.getElementById('btn-retour-liste');
     const btnFermer = document.getElementById('btn-fermer-detail');
     if (btnRetour) btnRetour.style.display = 'none';
-    if (btnFermer) btnFermer.style.display = 'block';
+    if (btnFermer) {
+        btnFermer.style.display = 'block';
+        btnFermer.innerText = vientDuCarnet ? "← Retour au Carnet" : "← Fermer";
+    }
     
 
     const btnTrad = document.getElementById('btn-traduire-recette');
@@ -6613,6 +6685,180 @@ function ouvrirPartenaireSuisse(site) {
     }
 
     if (url) window.open(url, '_blank', 'noopener,noreferrer');
+}
+
+// Mémoire pour savoir d'où l'on vient
+let vientDuCarnet = false;
+
+function ouvrirRecetteDepuisCarnet(idAliment, index) {
+    vientDuCarnet = true;
+    fermerCarnetRecettes();
+    ouvrirLecteurRecetteInApp(idAliment, index);
+}
+
+// ========================================================
+// LE CARNET DE RECETTES GLOBAL & DÉPLACEMENT
+// ========================================================
+function ouvrirCarnetRecettes() {
+    const conteneur = document.getElementById('liste-carnet-recettes');
+    if (!conteneur) return;
+    conteneur.innerHTML = '';
+    
+    let toutesRecettes = [];
+
+    // 1. On parcourt tous les aliments pour récolter les recettes
+    legumes.forEach(leg => {
+        if (leg.recettesList && leg.recettesList.length > 0) {
+            leg.recettesList.forEach((rec, index) => {
+                toutesRecettes.push({ rec: rec, leg: leg, index: index });
+            });
+        }
+    });
+
+    if (toutesRecettes.length === 0) {
+        conteneur.innerHTML = '<div style="text-align:center; padding: 20px; color:#888; font-style:italic; line-height: 1.5;">Aucune recette sauvegardée pour le moment.<br><br>Allez sur la fiche d\'un aliment et cliquez sur "🔍 Chercher une recette" !</div>';
+    } else {
+        // 2. Tri alphabétique par nom de recette
+        toutesRecettes.sort((a, b) => a.rec.nom.localeCompare(b.rec.nom));
+
+        // 3. Affichage
+        toutesRecettes.forEach(item => {
+            const div = document.createElement('div');
+            div.style.cssText = "background: #FFFFFF; border: 1px solid var(--border-color); border-radius: 14px; padding: 12px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.02);";
+            
+            let actionClick = "";
+            let styleBoutonVoir = "border-color: var(--accent); color: var(--accent-dark); background: #FFFDF8;";
+            
+            if (item.rec.instructions || item.rec.idMeal) {
+                // Ouvre la liseuse interne
+                actionClick = `onclick="ouvrirRecetteDepuisCarnet(${item.leg.id}, ${item.index})"`;
+            } else if (item.rec.url && typeof item.rec.url === 'string' && item.rec.url.trim() !== "") {
+                // Ouvre le lien web (Sécurité : on vérifie que c'est bien une chaîne de texte)
+                let validUrl = item.rec.url.startsWith('http') ? item.rec.url : 'https://' + item.rec.url;
+                // Sécurité anti-guillemets pour le onclick
+                actionClick = `onclick="window.open('${validUrl.replace(/'/g, "\\'")}', '_blank')"`;
+            } else {
+                // Recette vide
+                actionClick = `onclick="alert('Cette recette n\\'a pas encore de lien ou d\\'instructions.\\n\\nAllez sur la fiche de l\\'aliment (✏️) pour lui ajouter une adresse web !')"`;
+                styleBoutonVoir = "border-color: #E8E0D2; color: #8D99AE; background: #F9F7F2;";
+            }
+			
+            div.innerHTML = `
+                <div style="flex: 1; min-width: 0; cursor: pointer;" ${actionClick}>
+                    <div style="font-weight: 800; color: var(--text-title); font-size: 0.95rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${item.rec.nom}</div>
+                    <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 4px;">📌 Fiche : <strong style="color: var(--accent-dark);">${item.leg.nom}</strong></div>
+                </div>
+                <div style="display: flex; gap: 6px; flex-shrink: 0; margin-left: 10px;">
+                    <button class="btn" style="padding: 8px; font-size: 0.9rem; ${styleBoutonVoir}" ${actionClick} title="Voir la recette">👁️</button>
+                    <button class="btn" style="padding: 8px; font-size: 0.9rem; border-color: var(--border-color); color: #8D99AE; background: #FFF;" onclick="preparerDeplacementRecette(${item.leg.id}, ${item.index})" title="Déplacer vers un autre aliment">🔄</button>
+                    <button class="btn" style="padding: 8px; font-size: 0.9rem; border-color: #FFCDCD; color: #D32F2F; background: #FFF0F0;" onclick="supprimerRecetteDepuisCarnet(${item.leg.id}, ${item.index})" title="Supprimer la recette">🗑️</button>
+                </div>
+            `;
+            conteneur.appendChild(div);
+        });
+    }
+
+    const modal = document.getElementById('modal-carnet-recettes');
+    if (modal) modal.style.display = 'block';
+}
+
+function fermerCarnetRecettes() {
+    const modal = document.getElementById('modal-carnet-recettes');
+    if (modal) modal.style.display = 'none';
+}
+
+function supprimerRecetteDepuisCarnet(idAliment, indexRecette) {
+    const leg = legumes.find(l => l.id === idAliment);
+    if (!leg || !leg.recettesList || !leg.recettesList[indexRecette]) return;
+
+    const nomRecette = leg.recettesList[indexRecette].nom;
+    
+    if (confirm(`Voulez-vous vraiment supprimer la recette "${nomRecette}" ?`)) {
+        // Supprime la recette du tableau
+        leg.recettesList.splice(indexRecette, 1);
+        
+        // Sauvegarde dans le téléphone
+        saveToLocal();
+        
+        // Rafraîchit le carnet sous tes yeux
+        ouvrirCarnetRecettes();
+        
+        // Met à jour le compteur sur l'accueil
+        renderHomeCounts();
+    }
+}
+
+let deplacementRecetteEnCours = null;
+
+function preparerDeplacementRecette(idAlimentActuel, indexRecette) {
+    deplacementRecetteEnCours = { idAlimentActuel, indexRecette };
+    
+    const select = document.getElementById('select-nouvel-aliment');
+    select.innerHTML = '';
+    
+    // Trie tous les aliments par ordre alphabétique pour le menu déroulant
+    const alimentsTries = [...legumes].sort((a, b) => a.nom.localeCompare(b.nom));
+    
+    alimentsTries.forEach(leg => {
+        const option = document.createElement('option');
+        option.value = leg.id;
+        option.textContent = leg.nom;
+        if (leg.id === idAlimentActuel) {
+            option.selected = true;
+            option.textContent += " (Actuel)";
+        }
+        select.appendChild(option);
+    });
+    
+    const modal = document.getElementById('modal-deplacer-recette');
+    if (modal) {
+        modal.style.display = 'flex';
+        modal.classList.remove('hidden');
+    }
+}
+
+function fermerModalDeplacerRecette() {
+    const modal = document.getElementById('modal-deplacer-recette');
+    if (modal) {
+        modal.classList.add('hidden');
+        setTimeout(() => { modal.style.display = 'none'; }, 300);
+    }
+    deplacementRecetteEnCours = null;
+}
+
+function validerDeplacementRecette() {
+    if (!deplacementRecetteEnCours) return;
+    
+    const idNouvelAliment = parseInt(document.getElementById('select-nouvel-aliment').value, 10);
+    const { idAlimentActuel, indexRecette } = deplacementRecetteEnCours;
+    
+    if (idNouvelAliment === idAlimentActuel) {
+        fermerModalDeplacerRecette();
+        return; // L'utilisateur n'a rien changé
+    }
+    
+    const indexAncien = legumes.findIndex(l => l.id === idAlimentActuel);
+    const indexNouveau = legumes.findIndex(l => l.id === idNouvelAliment);
+    
+    if (indexAncien > -1 && indexNouveau > -1) {
+        // 1. On coupe la recette de l'ancien aliment
+        const recetteADeplacer = legumes[indexAncien].recettesList.splice(indexRecette, 1)[0];
+        
+        // 2. On la colle dans le nouvel aliment
+        if (!Array.isArray(legumes[indexNouveau].recettesList)) {
+            legumes[indexNouveau].recettesList = [];
+        }
+        legumes[indexNouveau].recettesList.push(recetteADeplacer);
+        
+        // 3. On sauvegarde dans le téléphone
+        saveToLocal();
+        
+        // 4. On rafraîchit l'interface
+        fermerModalDeplacerRecette();
+        ouvrirCarnetRecettes(); // Met à jour la liste sous tes yeux !
+        
+        alert(`✅ Recette déplacée avec succès vers la fiche : ${legumes[indexNouveau].nom}`);
+    }
 }
 
 // === PORTE SECRÈTE : MODE DÉVELOPPEUR / ADMIN ===
