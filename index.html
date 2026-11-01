@@ -266,10 +266,28 @@
             .nav-btn.right { right: -15px; }
         }
 
-        /* CACHER LES FLÈCHES UNIQUEMENT SUR VRAI ÉCRAN TACTILE (Smartphone) */
+        /* CACHER LES FLÈCHES ET AFFICHER L'INDICE SUR ÉCRAN TACTILE */
+        .swipe-hint {
+            display: none;
+            text-align: center;
+            font-size: 0.75rem;
+            color: var(--accent-dark);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 800;
+            margin-top: -35px;
+            margin-bottom: 40px;
+            animation: pulseHint 2s infinite;
+        }
+        @keyframes pulseHint {
+            0% { opacity: 0.4; transform: translateX(-3px); }
+            50% { opacity: 1; transform: translateX(3px); }
+            100% { opacity: 0.4; transform: translateX(-3px); }
+        }
         @media (hover: none) and (pointer: coarse) {
             .nav-btn { display: none; }
-            .carousel-wrapper { max-width: 85%; }
+            .carousel-wrapper { max-width: 85%; margin-bottom: 35px; }
+            .swipe-hint { display: block; } /* Fait apparaître le texte */
         }
 
 
@@ -509,6 +527,9 @@
         </button>
     </div>
 
+		<!-- Indice visuel pour mobile -->
+    <div class="swipe-hint">👈 Glissez pour découvrir 👉</div>
+
     <!-- SCRIPT POUR FAIRE DÉFILER LES FLÈCHES SUR PC -->
     <script>
         function scrollGallery(direction) {
@@ -646,7 +667,7 @@
     <!-- PIED DE PAGE -->
     <footer style="text-align: center; font-size: 0.75rem; color: var(--text-muted); line-height: 1.6; padding-bottom: 30px;">
         <p>
-            <strong>Le Petit Marché de mon Estomac • Version 13.02</strong><br>
+            <strong>Le Petit Marché de mon Estomac • Version 13.03</strong><br>
             Conçu avec passion en Suisse • Outil d'information diététique autonome.<br>
             <em>Ne remplace pas un avis médical ou le suivi d'un diététicien.</em>
         </p>
